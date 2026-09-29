@@ -3,5 +3,5 @@ import { createBrowserClient } from "@supabase/ssr";
 
 export const createClient = () => {
   const { SUPABASE_URL, SUPABASE_KEY } = environment;
-  createBrowserClient(SUPABASE_URL!, SUPABASE_KEY!);
+  return createBrowserClient(SUPABASE_URL!, SUPABASE_KEY!);
 };

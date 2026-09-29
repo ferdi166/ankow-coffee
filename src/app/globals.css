@@ -10,6 +10,17 @@
   --font-sans: var(--font-inter);
   --font-mono: var(--font-inter);
   --font-heading: var(--font-inter);
+
+  /* Ankow Coffee Brand Tokens */
+  --color-espresso: #1E1012;
+  --color-espresso-dark: #140B0C;
+  --color-espresso-light: #2A171A;
+  --color-latte: #C88A58;
+  --color-latte-hover: #B3794B;
+  --color-latte-light: #FDF8F4;
+  --color-surface: #F8F6F4;
+
+  /* Sidebar Tokens */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -18,6 +29,8 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+
+  /* Chart & UI Tokens */
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -39,6 +52,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -49,72 +63,92 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* Page & Card */
+  --background: #F8F6F4;
+  --foreground: #1E1012;
+  --card: #FFFFFF;
+  --card-foreground: #1E1012;
+  --popover: #FFFFFF;
+  --popover-foreground: #1E1012;
+
+  /* Primary Accent: Warm Latte */
+  --primary: #C88A58;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary & Muted */
+  --secondary: #F0ECE8;
+  --secondary-foreground: #1E1012;
+  --muted: #F2EFEA;
+  --muted-foreground: #796E65;
+  --accent: #F5EBE1;
+  --accent-foreground: #1E1012;
+
+  /* Destructive */
+  --destructive: #DC2626;
+
+  /* Border & Input */
+  --border: #E8E2DC;
+  --input: #E8E2DC;
+  --ring: #C88A58;
+
+  /* Charts */
+  --chart-1: #C88A58;
+  --chart-2: #1E1012;
+  --chart-3: #B3794B;
+  --chart-4: #D9A074;
+  --chart-5: #E8C4A7;
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar CMS: Dark Espresso #1E1012 */
+  --sidebar: #1E1012;
+  --sidebar-foreground: #F8F6F4;
+  --sidebar-primary: #C88A58;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #2A171A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #C88A58;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #140B0C;
+  --foreground: #F8F6F4;
+  --card: #1E1012;
+  --card-foreground: #F8F6F4;
+  --popover: #1E1012;
+  --popover-foreground: #F8F6F4;
+
+  --primary: #C88A58;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #2A171A;
+  --secondary-foreground: #F8F6F4;
+  --muted: #2A171A;
+  --muted-foreground: #A89B91;
+  --accent: #2A171A;
+  --accent-foreground: #F8F6F4;
+
+  --destructive: #EF4444;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #C88A58;
+
+  --chart-1: #C88A58;
+  --chart-2: #D9A074;
+  --chart-3: #B3794B;
+  --chart-4: #E8C4A7;
+  --chart-5: #796E65;
+
+  --sidebar: #140B0C;
+  --sidebar-foreground: #F8F6F4;
+  --sidebar-primary: #C88A58;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1E1012;
+  --sidebar-accent-foreground: #F8F6F4;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #C88A58;
 }
 
 @layer base {

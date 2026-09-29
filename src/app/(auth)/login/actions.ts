@@ -5,14 +5,10 @@ import { USER_ROLES } from "@/constants/user-roles";
 import { createClient } from "@/lib/supabase/server";
 import { AuthFormState } from "@/types/auth";
 import { loginSchemaForm } from "@/validations/auth-validation";
-import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function login(
-  prevState: AuthFormState,
-  formData: FormData | null,
-) {
+export async function login(prevState: AuthFormState, formData: FormData) {
   if (!formData) {
     return INITIAL_STATE_LOGIN_FORM;
   }
@@ -49,15 +45,11 @@ export async function login(
     };
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from("profile_users")
     .select("*")
     .eq("id", user?.id)
     .single();
-
-  console.log("USER ID:", user?.id);
-  console.log("PROFILE:", profile);
-  console.log("PROFILE ERROR:", profileError);
 
   if (profile) {
     const cookiesStore = await cookies();
@@ -71,9 +63,11 @@ export async function login(
 
   const role = profile?.role;
 
-  if (role === USER_ROLES.BARISTA_KITCHEN) {
-    redirect("/kds");
-  } else {
+  if (role === USER_ROLES.ADMIN) {
     redirect("/dashboard");
+  } else if (role === USER_ROLES.BARISTA_KITCHEN) {
+    redirect("/kitchen");
+  } else {
+    redirect("/");
   }
 }

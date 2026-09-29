@@ -16,34 +16,13 @@ import {
 import { LoginForm, loginSchemaForm } from "@/validations/auth-validation";
 import { startTransition, useActionState } from "react";
 import { useForm } from "react-hook-form";
-import { login } from "../action";
+import { login } from "../actions";
 import { Loader2, AlertCircle } from "lucide-react";
-import Link from "next/link";
-
-// Native Zod resolver for react-hook-form without extra dependencies
-const customZodResolver = async (values: LoginForm) => {
-  const result = loginSchemaForm.safeParse(values);
-  if (result.success) {
-    return { values: result.data, errors: {} };
-  }
-
-  const errors: Record<string, { type: string; message: string }> = {};
-  for (const issue of result.error.issues) {
-    const fieldName = issue.path[0] as string;
-    if (!errors[fieldName]) {
-      errors[fieldName] = {
-        type: issue.code,
-        message: issue.message,
-      };
-    }
-  }
-
-  return { values: {}, errors };
-};
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function Login() {
   const form = useForm<LoginForm>({
-    resolver: customZodResolver,
+    resolver: zodResolver(loginSchemaForm),
     defaultValues: INITIAL_LOGIN_FORM,
   });
 

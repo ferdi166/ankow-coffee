@@ -21,6 +21,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { USER_ROLES } from "@/constants/user-roles";
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -28,17 +29,26 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4 group-data-[collapsible=icon]:ml-1">
+      <SidebarHeader className="p-4 border-b border-latte/20 group-data-[collapsible=icon]:ml-1">
         <div className="flex items-center gap-3">
           <div className="flex flex-col min-w-0 group-data-[collapsible=icon]:hidden">
             <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-xl border border-latte/20 bg-espresso text-latte shadow-md">
-                <Coffee className="size-5" />
+              <div className="flex size-11 items-center justify-center rounded-xl border border-latte/20 bg-espresso text-latte shadow-md">
+                <Coffee className="size-6" />
               </div>
 
-              <span className="text-xl font-semibold tracking-tight text-latte">
-                Ankow Coffee
-              </span>
+              <div className="flex flex-col">
+                <span className="text-lg font-semibold tracking-tight text-white">
+                  Ankow Coffee
+                </span>
+                <span className="text-xs font-medium text-latte/70">
+                  {profile.role === USER_ROLES.ADMIN
+                    ? "Admin CMS Studio"
+                    : profile.role === USER_ROLES.BARISTA_KITCHEN
+                      ? "Kitchen Display"
+                      : ""}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -88,14 +98,14 @@ export default function AppSidebar() {
               size="lg"
               className="w-full flex items-center gap-3 p-2 h-12">
               <Avatar className="h-10 w-10 rounded-lg">
-                <AvatarImage />
+                {/* <AvatarImage /> */}
                 <AvatarFallback>{profile.full_name?.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0 leading-tight group-data-[collapsible=icon]:hidden">
                 <h4 className="truncate font-semibold text-sm text-text-primary">
                   {profile.full_name}
                 </h4>
-                <p className="text-muted-foreground truncate text-xs">
+                <p className="text-muted-foreground truncate text-xs capitalize">
                   {profile.role}
                 </p>
               </div>

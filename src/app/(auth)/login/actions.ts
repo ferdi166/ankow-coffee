@@ -45,10 +45,20 @@ export async function login(prevState: AuthFormState, formData: FormData) {
     };
   }
 
+  if (!user) {
+    return {
+      status: "error",
+      errors: {
+        _form: ["Data user tidak ditemukan."],
+      },
+    };
+  }
+
   const { data: profile } = await supabase
     .from("profile_users")
-    .select("*")
-    .eq("id", user?.id)
+    .select("id, full_name, role, is_active")
+    .eq("id", user.id)
+    .eq("is_active", true)
     .single();
 
   if (profile) {

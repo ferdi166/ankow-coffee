@@ -1,3 +1,5 @@
+"use client";
+
 import { Coffee, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
@@ -11,33 +13,30 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import Logo from "./logo";
 import {
   SIDEBAR_MENU_LIST,
   type SidebarMenuKey,
 } from "@/constants/sidebar-constant";
 import { useAuthStore } from "@/stores/auth-store";
-import { Link, useLocation } from "react-router";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 export default function AppSidebar() {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
   const profile = useAuthStore((state) => state.profile);
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4 border-b group-data-[collapsible=icon]:ml-1">
+      <SidebarHeader className="p-4 group-data-[collapsible=icon]:ml-1">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 p-2 items-center justify-center rounded-full bg-primary/10 shrink-0">
-            <Logo className="text-primary" />
-          </div>
           <div className="flex flex-col min-w-0 group-data-[collapsible=icon]:hidden">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-xl border border-latte/20 bg-espresso text-latte shadow-md">
                 <Coffee className="size-5" />
               </div>
 
-              <span className="text-2xl font-bold tracking-tight text-espresso">
+              <span className="text-xl font-semibold tracking-tight text-latte">
                 Ankow Coffee
               </span>
             </div>
@@ -54,7 +53,7 @@ export default function AppSidebar() {
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
-                        render={<Link to={item.url} />}
+                        render={<Link href={item.url} />}
                         tooltip={item.title}
                         className={cn(
                           "h-12 w-full flex items-center gap-3 px-4 transition-colors cursor-pointer group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0",
@@ -90,14 +89,14 @@ export default function AppSidebar() {
               className="w-full flex items-center gap-3 p-2 h-12">
               <Avatar className="h-10 w-10 rounded-lg">
                 <AvatarImage />
-                <AvatarFallback>A</AvatarFallback>
+                <AvatarFallback>{profile.full_name?.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0 leading-tight group-data-[collapsible=icon]:hidden">
                 <h4 className="truncate font-semibold text-sm text-text-primary">
-                  Admin
+                  {profile.full_name}
                 </h4>
                 <p className="text-muted-foreground truncate text-xs">
-                  Administrator
+                  {profile.role}
                 </p>
               </div>
               <LogOut className="size-5 text-text-secondary group-hover:text-destructive transition-colors" />

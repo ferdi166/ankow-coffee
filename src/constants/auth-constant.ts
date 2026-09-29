@@ -20,3 +20,9 @@ export const INITIAL_STATE_LOGIN_FORM: LoginActionState = {
   errors: {},
   message: "",
 };
+
+export const INITIAL_STATE_PROFILE = {
+  id: "",
+  full_name: "",
+  role: "",
+};

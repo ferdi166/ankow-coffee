@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { cookies } from "next/headers";
+import AuthStoreProvider from "@/providers/auth-store-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -12,10 +14,14 @@ export const metadata: Metadata = {
   description: "Cafe & Co-Working Space",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const cookiesStore = await cookies();
+  const profile = JSON.parse(cookiesStore.get("user_profile")?.value ?? "{}");
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body>
+        <AuthStoreProvider profile={profile}>{children}</AuthStoreProvider>
+      </body>
     </html>
   );
 }

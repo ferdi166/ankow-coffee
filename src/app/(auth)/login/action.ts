@@ -1,108 +1,79 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { INITIAL_STATE_LOGIN_FORM } from "@/constants/auth-constant";
 import { USER_ROLES } from "@/constants/user-roles";
+import { createClient } from "@/lib/supabase/server";
+import { AuthFormState } from "@/types/auth";
 import { loginSchemaForm } from "@/validations/auth-validation";
-import { LoginActionState } from "@/constants/auth-constant";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function login(
-  _prevState: LoginActionState | null,
-  formData: FormData,
-): Promise<LoginActionState> {
-  const rawData = {
+  prevState: AuthFormState,
+  formData: FormData | null,
+) {
+  if (!formData) {
+    return INITIAL_STATE_LOGIN_FORM;
+  }
+
+  const validateFields = loginSchemaForm.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
-  };
+  });
 
-  const parsed = loginSchemaForm.safeParse(rawData);
-  if (!parsed.success) {
-    const fieldErrors = parsed.error.flatten().fieldErrors;
+  if (!validateFields.success) {
     return {
       status: "error",
       errors: {
-        email: fieldErrors.email,
-        password: fieldErrors.password,
+        ...validateFields.error.flatten().fieldErrors,
+        _form: [],
       },
-      message: "Periksa kembali input data Anda.",
     };
   }
 
-  const { email, password } = parsed.data;
   const supabase = await createClient();
 
   const {
+    error,
     data: { user },
-    error: authError,
-  } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  } = await supabase.auth.signInWithPassword(validateFields.data);
 
-  if (authError || !user) {
+  if (error) {
     return {
       status: "error",
       errors: {
-        _form: [
-          authError?.message === "Invalid login credentials"
-            ? "Email atau password yang Anda masukkan salah."
-            : authError?.message || "Gagal masuk ke sistem. Silakan coba lagi.",
-        ],
+        ...prevState.errors,
+        _form: [error.message],
       },
-      message: "Autentikasi gagal.",
     };
   }
 
-  // Fetch profile to verify role and status
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profile_users")
-    .select("role, is_active")
-    .eq("id", user.id)
+    .select("*")
+    .eq("id", user?.id)
     .single();
 
-  if (profile && !profile.is_active) {
-    await supabase.auth.signOut();
-    return {
-      status: "error",
-      errors: {
-        _form: [
-          "Akun Anda telah dinonaktifkan. Silakan hubungi Administrator.",
-        ],
-      },
-      message: "Akun nonaktif.",
-    };
+  console.log("USER ID:", user?.id);
+  console.log("PROFILE:", profile);
+  console.log("PROFILE ERROR:", profileError);
+
+  if (profile) {
+    const cookiesStore = await cookies();
+    cookiesStore.set("user_profile", JSON.stringify(profile), {
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 365,
+    });
   }
 
-  const role = profile?.role || user.user_metadata?.role;
+  const role = profile?.role;
 
   if (role === USER_ROLES.BARISTA_KITCHEN) {
     redirect("/kds");
   } else {
     redirect("/dashboard");
   }
-}
-
-export const loginAction = login;
-
-export async function logoutAction() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  redirect("/login");
-}
-
-export async function getCurrentUserProfile() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
-  const { data: profile } = await supabase
-    .from("profile_users")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  return profile || null;
 }

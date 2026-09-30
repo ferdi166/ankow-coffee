@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cookies } from "next/headers";
 import AuthStoreProvider from "@/providers/auth-store-provider";
+import ReactQueryProvider from "@/providers/react-query-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,7 +21,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body>
-        <AuthStoreProvider profile={profile}>{children}</AuthStoreProvider>
+        <ReactQueryProvider>
+          <AuthStoreProvider profile={profile}>{children}</AuthStoreProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

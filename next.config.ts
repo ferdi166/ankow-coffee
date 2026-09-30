@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
   },
   devIndicators: false,
   images: {
-    domains: ["https://hvuybhxdburaiytcisus.supabase.co"],
     remotePatterns: [
       {
         protocol: "https",

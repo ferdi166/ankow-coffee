@@ -3,19 +3,28 @@ import SectionHeader from "@/components/common/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileCafe } from "@/validations/profile-cafe-validation";
-import { Clock3, ImagePlus, Store, Trash2, UploadCloud } from "lucide-react";
+import {
+  Clock3,
+  ImagePlus,
+  Save,
+  Store,
+  Trash2,
+  UploadCloud,
+} from "lucide-react";
 import Image from "next/image";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 export default function FormProfileCafe<T extends FieldValues>({
   form,
   profile_cafe,
+  onSubmit,
 }: {
   form: UseFormReturn<T>;
   profile_cafe: ProfileCafe;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <>
+    <form onSubmit={onSubmit} className="space-y-8 mt-4">
       <Card>
         <SectionHeader
           icon={Store}
@@ -110,6 +119,11 @@ export default function FormProfileCafe<T extends FieldValues>({
           />
         </CardContent>
       </Card>
-    </>
+      <div className="flex justify-end">
+        <Button type="submit" className="shrink-0">
+          <Save /> Simpan Perubahan
+        </Button>
+      </div>
+    </form>
   );
 }

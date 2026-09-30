@@ -1,28 +1,16 @@
 "use client";
 
-import FormInput from "@/components/common/form-input";
 import PageTitle from "@/components/common/page-title";
-import SectionHeader from "@/components/common/section-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
-import {
+import type {
   ProfileCafe,
   ProfileCafeForm,
-  ProfileCafeSchemaForm,
 } from "@/validations/profile-cafe-validation";
+import { ProfileCafeSchemaForm } from "@/validations/profile-cafe-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Clock3,
-  ImagePlus,
-  Loader2,
-  Save,
-  Store,
-  Trash2,
-  UploadCloud,
-} from "lucide-react";
-import Image from "next/image";
+import { Save } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import FormProfileCafe from "./form-profile-cafe";
@@ -62,11 +50,9 @@ export default function ProfileCafe() {
     form.setValue("cafe_name", profile_cafe.cafe_name);
     form.setValue("tagline", profile_cafe.tagline);
     form.setValue("description", profile_cafe.description);
-    form.setValue("banner_url", profile_cafe.banner_url ?? "");
+    form.setValue("banner_url", profile_cafe.banner_url);
     form.setValue("open_time", profile_cafe.open_time);
     form.setValue("close_time", profile_cafe.close_time);
-    form.setValue("wifi_speed", profile_cafe.wifi_speed);
-    form.setValue("total_sockets", profile_cafe.total_sockets);
   }, [profile_cafe, form]);
 
   return (
@@ -77,9 +63,6 @@ export default function ProfileCafe() {
           description=" Kelola informasi publik, jam operasional, fasilitas WFC, dan banner
             landing page Ankow Coffee."
         />
-        <Button type="button" onClick={() => {}} className="shrink-0">
-          <Save /> Simpan Perubahan
-        </Button>
       </header>
 
       {profile_cafe && (

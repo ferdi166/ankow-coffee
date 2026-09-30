@@ -43,3 +43,6 @@ next-env.d.ts
 
 # PRD
 PRD*
+
+# backup
+src/app/(dashboard)/(admin)/profile-cafe/_components/profile-cafe.tsx.backup

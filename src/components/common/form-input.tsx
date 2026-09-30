@@ -51,8 +51,12 @@ export default function FormInput<T extends FieldValues>({
             />
           ) : (
             <Input
-              {...field}
               id={name}
+              name={field.name}
+              ref={field.ref}
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
               type={type}
               placeholder={placeholder}
               autoComplete="off"

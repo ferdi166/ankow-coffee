@@ -71,7 +71,18 @@ export async function login(prevState: AuthFormState, formData: FormData) {
     });
   }
 
-  const role = profile?.role;
+  if (profile?.is_active !== true) {
+    await supabase.auth.signOut();
+
+    return {
+      status: "error",
+      errors: {
+        _form: ["Akun tidak aktif"],
+      },
+    };
+  }
+
+  const role = profile.role;
 
   if (role === USER_ROLES.ADMIN) {
     redirect("/dashboard");

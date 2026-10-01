@@ -91,8 +91,8 @@ export default function FormUpdateProfileCafe({
   return (
     <FormProfileCafe
       form={form}
-      profile_cafe={profile_cafe}
       onSubmit={onSubmit}
+      isLoading={isPendingUpdateProfileCafe}
       preview={preview}
       setPreview={setPreview}
     />

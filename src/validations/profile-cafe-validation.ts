@@ -7,8 +7,8 @@ export const ProfileCafeSchemaForm = z.object({
   banner_url: z.union([z.string(), z.instanceof(File)]),
   open_time: z.string().time(),
   close_time: z.string().time(),
-  wifi_speed: z.string(),
-  total_sockets: z.string(),
+  // wifi_speed: z.string(),
+  // total_sockets: z.string(),
 });
 
 export type ProfileCafeForm = z.infer<typeof ProfileCafeSchemaForm>;

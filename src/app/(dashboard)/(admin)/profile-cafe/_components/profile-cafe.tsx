@@ -1,19 +1,9 @@
 "use client";
 
 import PageTitle from "@/components/common/page-title";
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import type {
-  ProfileCafe,
-  ProfileCafeForm,
-} from "@/validations/profile-cafe-validation";
-import { ProfileCafeSchemaForm } from "@/validations/profile-cafe-validation";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { ProfileCafe } from "@/validations/profile-cafe-validation";
 import { useQuery } from "@tanstack/react-query";
-import { Save } from "lucide-react";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import FormProfileCafe from "./form-profile-cafe";
 import UpdateProfileCafe from "./form-update-profile-cafe";
 
 export default function ProfileCafe() {
@@ -28,7 +18,7 @@ export default function ProfileCafe() {
       const { data, error } = await supabase
         .from("profile_cafe")
         .select(
-          "id, cafe_name, tagline, description, banner_url, open_time, close_time, wifi_speed, total_sockets",
+          "id, cafe_name, tagline, description, banner_url, open_time, close_time",
         )
         .maybeSingle();
 

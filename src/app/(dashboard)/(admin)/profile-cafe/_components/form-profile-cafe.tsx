@@ -4,28 +4,19 @@ import SectionHeader from "@/components/common/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Preview } from "@/types/general";
-import { ProfileCafe } from "@/validations/profile-cafe-validation";
-import {
-  Clock3,
-  ImagePlus,
-  Save,
-  Store,
-  Trash2,
-  UploadCloud,
-} from "lucide-react";
-import Image from "next/image";
+import { Clock3, ImagePlus, Loader2, Save, Store } from "lucide-react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 export default function FormProfileCafe<T extends FieldValues>({
   form,
-  profile_cafe,
   onSubmit,
+  isLoading,
   preview,
   setPreview,
 }: {
   form: UseFormReturn<T>;
-  profile_cafe: ProfileCafe;
   onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => void;
+  isLoading: boolean;
   preview?: Preview;
   setPreview?: (preview: Preview) => void;
 }) {
@@ -85,11 +76,13 @@ export default function FormProfileCafe<T extends FieldValues>({
         <CardContent className="grid gap-5 md:grid-cols-2">
           <FormInput
             form={form}
+            type="time"
             name={"open_time" as Path<T>}
             label="Jam Buka"
           />
           <FormInput
             form={form}
+            type="time"
             name={"close_time" as Path<T>}
             label="Jam Buka"
           />
@@ -97,7 +90,8 @@ export default function FormProfileCafe<T extends FieldValues>({
       </Card>
       <div className="flex justify-end">
         <Button type="submit" className="shrink-0">
-          <Save /> Simpan Perubahan
+          {isLoading ? <Loader2 className="animate-spin" /> : <Save />}
+          {isLoading ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>
     </form>

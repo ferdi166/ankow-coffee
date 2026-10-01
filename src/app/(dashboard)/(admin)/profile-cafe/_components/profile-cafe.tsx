@@ -14,6 +14,7 @@ import { Save } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import FormProfileCafe from "./form-profile-cafe";
+import UpdateProfileCafe from "./form-update-profile-cafe";
 
 export default function ProfileCafe() {
   const supabase = createClient();
@@ -39,22 +40,6 @@ export default function ProfileCafe() {
     },
   });
 
-  const form = useForm<ProfileCafeForm>({
-    resolver: zodResolver(ProfileCafeSchemaForm),
-  });
-
-  useEffect(() => {
-    console.log(profile_cafe);
-    if (!profile_cafe) return;
-
-    form.setValue("cafe_name", profile_cafe.cafe_name);
-    form.setValue("tagline", profile_cafe.tagline);
-    form.setValue("description", profile_cafe.description);
-    form.setValue("banner_url", profile_cafe.banner_url);
-    form.setValue("open_time", profile_cafe.open_time);
-    form.setValue("close_time", profile_cafe.close_time);
-  }, [profile_cafe, form]);
-
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6">
       <header className="flex flex-col gap-4 border-b border-border pb-5 md:flex-row md:items-end md:justify-between">
@@ -66,7 +51,7 @@ export default function ProfileCafe() {
       </header>
 
       {profile_cafe && (
-        <FormProfileCafe form={form} profile_cafe={profile_cafe} />
+        <UpdateProfileCafe profile_cafe={profile_cafe} refetch={refetch} />
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import "./globals.css";
 import { cookies } from "next/headers";
 import AuthStoreProvider from "@/providers/auth-store-provider";
 import ReactQueryProvider from "@/providers/react-query-provider";
+import { Toaster } from "@/components/ui/toast";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -22,7 +23,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body>
         <ReactQueryProvider>
-          <AuthStoreProvider profile={profile}>{children}</AuthStoreProvider>
+          <AuthStoreProvider profile={profile}>
+            {children}
+            <Toaster />
+          </AuthStoreProvider>
         </ReactQueryProvider>
       </body>
     </html>

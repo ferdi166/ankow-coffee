@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ProfileCafeState } from "@/types/profile-cafe";
 import { ProfileCafeSchemaForm } from "@/validations/profile-cafe-validation";
 
-export async function UpdateProfileCafe(
+export async function updateProfileCafe(
   prevState: ProfileCafeState,
   formData: FormData,
 ) {

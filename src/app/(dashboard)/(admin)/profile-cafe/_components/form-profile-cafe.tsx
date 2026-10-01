@@ -1,7 +1,9 @@
+import FormImage from "@/components/common/form-image";
 import FormInput from "@/components/common/form-input";
 import SectionHeader from "@/components/common/section-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Preview } from "@/types/general";
 import { ProfileCafe } from "@/validations/profile-cafe-validation";
 import {
   Clock3,
@@ -18,10 +20,14 @@ export default function FormProfileCafe<T extends FieldValues>({
   form,
   profile_cafe,
   onSubmit,
+  preview,
+  setPreview,
 }: {
   form: UseFormReturn<T>;
   profile_cafe: ProfileCafe;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => void;
+  preview?: Preview;
+  setPreview?: (preview: Preview) => void;
 }) {
   return (
     <form onSubmit={onSubmit} className="space-y-8 mt-4">
@@ -60,43 +66,13 @@ export default function FormProfileCafe<T extends FieldValues>({
           description="Visual pembuka landing page utama dengan rasio rekomendasi 16:9."
         />
         <CardContent className="space-y-5">
-          <div className="relative aspect-video max-h-95 overflow-hidden rounded-xl border border-border">
-            {typeof profile_cafe?.banner_url === "string" && (
-              <Image
-                src={profile_cafe.banner_url}
-                alt="Banner Kafe"
-                fill
-                loading="eager"
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 960px"
-              />
-            )}
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={() => {}}
-              title="Hapus banner"
-              aria-label="Hapus banner"
-              className="absolute top-3 right-3 shadow-md">
-              <Trash2 />
-              Hapus
-            </Button>
-          </div>
-          <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 p-8 text-center transition-colors hover:border-primary">
-            <UploadCloud className="mb-2 size-8 text-primary" />
-            <span className="text-sm font-semibold">
-              {"Unggah foto banner baru"}
-            </span>
-            <span className="mt-1 text-xs text-muted-foreground">
-              PNG, JPG, atau WebP hingga 5 MB
-            </span>
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              className="sr-only"
-            />
-          </label>
+          <FormImage
+            form={form}
+            name={"banner_url" as Path<T>}
+            label="Banner Kafe"
+            preview={preview}
+            setPreview={setPreview}
+          />
         </CardContent>
       </Card>
 

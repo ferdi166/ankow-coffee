@@ -22,7 +22,7 @@ export const SIDEBAR_MENU_LIST = {
     },
     {
       title: "Galeri Spot",
-      url: "/galeri",
+      url: "/galeri-spot",
       icon: Images,
     },
     {

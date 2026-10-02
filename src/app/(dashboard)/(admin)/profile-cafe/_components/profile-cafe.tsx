@@ -35,7 +35,7 @@ export default function ProfileCafe() {
       <header className="flex flex-col gap-4 border-b border-border pb-5 md:flex-row md:items-end md:justify-between">
         <PageTitle
           title="Pengaturan Profil Kafe"
-          description=" Kelola informasi publik, jam operasional, fasilitas WFC, dan banner
+          description="Kelola informasi publik, jam operasional, fasilitas WFC, dan banner
             landing page Ankow Coffee."
         />
       </header>

@@ -1,24 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import {
-  Airplay,
-  Armchair,
-  Cigarette,
-  Coffee,
-  Grid2X2,
-  ImagePlus,
-  Laptop,
-  List,
-  Music,
-  Plug,
-  Search,
-  Sparkles,
-  Trees,
-  VolumeX,
-  Wind,
-  Building2,
-} from "lucide-react";
+import { Grid2X2, ImagePlus, List, Search } from "lucide-react";
 import PageTitle from "@/components/common/page-title";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,64 +10,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/toast";
 import CardSpot from "./card-spot";
-
-interface Facility {
-  icon: string;
-  label: string;
-}
-
-interface SpotItem {
-  id: string;
-  title: string;
-  description: string;
-  category: "Indoor" | "Outdoor";
-  badgeCategory: string;
-  categoryIcon: string;
-  capacity: string;
-  imageUrl: string;
-  isVisible: boolean;
-  facilities: Facility[];
-}
-
-// Helper untuk pemetaan ikon Lucide dari string nama fasilitas
-const getFacilityIcon = (iconName: string) => {
-  switch (iconName) {
-    case "music_note":
-      return <Music className="size-3" />;
-    case "chair":
-    case "chair_alt":
-      return <Armchair className="size-3" />;
-    case "mode_fan":
-      return <Airplay className="size-3" />;
-    case "volume_off":
-      return <VolumeX className="size-3" />;
-    case "power":
-      return <Plug className="size-3" />;
-    case "yard":
-    case "park":
-      return <Trees className="size-3" />;
-    case "smoking_rooms":
-      return <Cigarette className="size-3" />;
-    case "air":
-      return <Wind className="size-3" />;
-    case "coffee":
-      return <Coffee className="size-3" />;
-    case "laptop_mac":
-      return <Laptop className="size-3" />;
-    case "VolumeX":
-      return <VolumeX className="size-3" />;
-    case "Music":
-      return <Music className="size-3" />;
-    case "Armchair":
-      return <Armchair className="size-3" />;
-    case "Plug":
-      return <Plug className="size-3" />;
-    case "building-2":
-      return <Building2 className="size-3" />;
-    default:
-      return <Sparkles className="size-3" />;
-  }
-};
+import { SpotItem } from "@/types/galeri-spot";
+import { getFacilityIcon } from "../_utils/get-facility-icon";
 
 export default function GaleriSpotMain() {
   const supabase = createClient();

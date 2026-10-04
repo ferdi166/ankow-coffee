@@ -2,37 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { FacilityIconResolver, SpotItem } from "@/types/galeri-spot";
 import { Edit, Trash2, Users } from "lucide-react";
 import Image from "next/image";
-import { ReactNode } from "react";
-
-interface Facility {
-  icon: string;
-  label: string;
-}
-
-interface SpotItem {
-  id: string;
-  title: string;
-  description: string;
-  category: "Indoor" | "Outdoor";
-  categoryIcon: string;
-  capacity: string;
-  imageUrl: string;
-  isVisible: boolean;
-  facilities: Facility[];
-}
 
 export default function CardSpot({
   spot,
   viewMode,
   getFacilityIcon,
   handleToggleVisibility,
+  onEdit,
+  onDelete,
 }: {
   spot: SpotItem;
   viewMode: "grid" | "list";
-  getFacilityIcon: (iconName: string) => ReactNode;
+  getFacilityIcon: FacilityIconResolver;
   handleToggleVisibility: (id: string, isActive: boolean) => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }) {
   return (
     <Card
@@ -113,7 +100,11 @@ export default function CardSpot({
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="h-8 px-3 text-xs">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 px-3 text-xs"
+            onClick={onEdit}>
             <Edit className="size-4" />
           </Button>
 
@@ -121,7 +112,8 @@ export default function CardSpot({
             variant="destructive"
             size="icon-sm"
             aria-label="Hapus Spot"
-            className="size-8">
+            className="size-8"
+            onClick={onDelete}>
             <Trash2 className="size-4" />
           </Button>
         </div>

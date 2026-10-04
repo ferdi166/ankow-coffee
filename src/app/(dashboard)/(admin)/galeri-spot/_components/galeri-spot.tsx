@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Airplay,
   Armchair,
@@ -30,6 +30,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { createClient } from "@/lib/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "@/components/ui/toast";
 
 interface Facility {
   icon: string;
@@ -37,7 +40,7 @@ interface Facility {
 }
 
 interface SpotItem {
-  id: number;
+  id: string;
   title: string;
   description: string;
   category: "Indoor" | "Outdoor";
@@ -48,63 +51,6 @@ interface SpotItem {
   isVisible: boolean;
   facilities: Facility[];
 }
-
-const SPOT_DATA: SpotItem[] = [
-  {
-    id: 1,
-    title: "Main Bar & Communal Lounge",
-    description:
-      "Area bar utama dengan suasana hangat, alunan musik lo-fi, dan kursi sofa empuk untuk bersantai santai maupun ngobrol casual.",
-    category: "Indoor",
-    badgeCategory: "Indoor Area",
-    categoryIcon: "coffee",
-    capacity: "Kapasitas 25 Orang",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuA9ppHeh04x8dQ8GMRWxhEemJl-HeVExN4OArAst_h9ncepSEXkTDSinvlKokRQukNjE_7kUpdBrJ2eeUjD9AQENb0vwYyfPwn0CiTvDuYgM2-0U5jz_4PvRXr1ZhOf2UjlQ1AE_Vmx_vUcXPkwek2InX-uq64EeX0zcBz9udiRv4Mwiq-Pl1DS0LUFi-fbVFMi65JB_fRx_eza_6ALogUxduyyFyN4CGJ_IhJ6XhOstZlkqxe3CmvnJw",
-    isVisible: true,
-    facilities: [
-      { icon: "music_note", label: "Lively Ambience" },
-      { icon: "chair", label: "Sofa & Bar Stool" },
-      { icon: "mode_fan", label: "AC Central" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Dedicated WFC Mezzanine",
-    description:
-      "Area lantai dua khusus kerja & produktivitas. Didesain senyap dengan meja kayu panjang, colokan universal tiap meja, dan WiFi 150 Mbps.",
-    category: "Indoor",
-    badgeCategory: "Indoor Mezzanine",
-    categoryIcon: "laptop_mac",
-    capacity: "Kapasitas 16 Orang",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuA9ppHeh04x8dQ8GMRWxhEemJl-HeVExN4OArAst_h9ncepSEXkTDSinvlKokRQukNjE_7kUpdBrJ2eeUjD9AQENb0vwYyfPwn0CiTvDuYgM2-0U5jz_4PvRXr1ZhOf2UjlQ1AE_Vmx_vUcXPkwek2InX-uq64EeX0zcBz9udiRv4Mwiq-Pl1DS0LUFi-fbVFMi65JB_fRx_eza_6ALogUxduyyFyN4CGJ_IhJ6XhOstZlkqxe3CmvnJw",
-    isVisible: true,
-    facilities: [
-      { icon: "volume_off", label: "Quiet Zone" },
-      { icon: "power", label: "Colokan Tiap Meja" },
-      { icon: "chair_alt", label: "Ergonomic Chairs" },
-    ],
-  },
-  {
-    id: 3,
-    title: "Sunlit Courtyard Garden",
-    description:
-      "Area halaman belakang terbuka dengan vegetasi tanaman tropis asri, bebatuan koral, kanopi teduh, dan area ramah merokok.",
-    category: "Outdoor",
-    badgeCategory: "Outdoor Area",
-    categoryIcon: "park",
-    capacity: "Kapasitas 20 Orang",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBoYXFw8SujC6wMs1PT46YZ8B3LNGEghqbZ7oIYppGS0vLJXHx_PNId6JUNwpeHCGaefR_cyqnaTxPaJZSUKN6v2UZs2RZ9iSxmgHy9IDRJy3kRjnJOPYlzVEDXzfVYDt8LdoTqJDWzSRCc8qXAHGwwIhyIgY89wX80phTHwgscF-NrsbQ7NsOgv4KTZbKF9RleRWKRb7rVqsukhvk5Zb_kDBkqMagIpQ3OyxSPEzaFuxWYF-7D05nH1Q",
-    isVisible: true,
-    facilities: [
-      { icon: "yard", label: "Lush Garden" },
-      { icon: "smoking_rooms", label: "Smokers Area" },
-      { icon: "air", label: "Natural Breeze" },
-    ],
-  },
-];
 
 // Helper untuk pemetaan ikon Lucide dari string nama fasilitas
 const getFacilityIcon = (iconName: string) => {
@@ -131,25 +77,87 @@ const getFacilityIcon = (iconName: string) => {
       return <Coffee className="size-3" />;
     case "laptop_mac":
       return <Laptop className="size-3" />;
+    case "VolumeX":
+      return <VolumeX className="size-3" />;
+    case "Music":
+      return <Music className="size-3" />;
+    case "Armchair":
+      return <Armchair className="size-3" />;
+    case "Plug":
+      return <Plug className="size-3" />;
     default:
       return <Sparkles className="size-3" />;
   }
 };
 
 export default function GaleriSpotMain() {
-  const [spots, setSpots] = useState<SpotItem[]>(SPOT_DATA);
+  const supabase = createClient();
+  const {
+    data: galeri_spot,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["galeri_spot"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("galleries")
+        .select(
+          "id, title, description, image_url, category_tag, capacity_text, features, is_active",
+        );
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+  });
+
+  const spots: SpotItem[] = useMemo(() => {
+    return (galeri_spot ?? []).map((item) => {
+      const category = item.category_tag === "Outdoor" ? "Outdoor" : "Indoor";
+
+      return {
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        category,
+        badgeCategory: `${category} Area`,
+        categoryIcon: category === "Outdoor" ? "park" : "coffee",
+        capacity: item.capacity_text,
+        imageUrl: item.image_url,
+        isVisible: item.is_active,
+        facilities: item.features ?? [],
+      };
+    });
+  }, [galeri_spot]);
+
+  // const [spots, setSpots] = useState<SpotItem[]>(SPOT_DATA);
   const [activeTab, setActiveTab] = useState<"ALL" | "Indoor" | "Outdoor">(
     "ALL",
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const handleToggleVisibility = (id: number) => {
-    setSpots((prev) =>
-      prev.map((spot) =>
-        spot.id === id ? { ...spot, isVisible: !spot.isVisible } : spot,
-      ),
-    );
+  const handleToggleVisibility = async (id: string, isActive: boolean) => {
+    const { error, success } = await supabase
+      .from("galleries")
+      .update({ is_active: isActive })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Gagal mengubah status galeri:", error);
+      return;
+    }
+
+    if (success) {
+      await refetch();
+      toast.add({
+        type: "success",
+        title: "Update Status berhasil",
+      });
+      return;
+    }
   };
 
   const filteredSpots = spots.filter((spot) => {
@@ -237,7 +245,7 @@ export default function GaleriSpotMain() {
 
       {/* 3-Column Spot Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredSpots.map((spot) => (
+        {filteredSpots?.map((spot) => (
           <Card
             key={spot.id}
             className={`group flex h-full flex-col gap-0 overflow-hidden border-border py-0 transition-all hover:border-primary/50 ${
@@ -252,7 +260,7 @@ export default function GaleriSpotMain() {
                 src={spot.imageUrl}
                 alt={spot.title}
                 fill
-                priority={spot.id === 1}
+                loading="eager"
                 sizes={
                   viewMode === "list"
                     ? "(max-width: 768px) 100vw, 256px"
@@ -265,7 +273,7 @@ export default function GaleriSpotMain() {
                 <span className="text-primary">
                   {getFacilityIcon(spot.categoryIcon)}
                 </span>
-                {spot.badgeCategory}
+                {spot.category}
               </span>
               {/* Badge Kapasitas */}
               <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-card/90 backdrop-blur-sm text-fobg-foreground shadow-xs">
@@ -304,7 +312,9 @@ export default function GaleriSpotMain() {
                 <Switch
                   id={`visible-${spot.id}`}
                   checked={spot.isVisible}
-                  onCheckedChange={() => handleToggleVisibility(spot.id)}
+                  onCheckedChange={(checked) =>
+                    handleToggleVisibility(spot.id, checked)
+                  }
                 />
                 <Label
                   htmlFor={`visible-${spot.id}`}

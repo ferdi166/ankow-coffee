@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/toast";
 import CardSpot from "./card-spot";
 import { SpotItem } from "@/types/galeri-spot";
 import { getFacilityIcon } from "../_utils/get-facility-icon";
+import SpotFilter from "./spot-filter";
 
 export default function GaleriSpotMain() {
   const supabase = createClient();
@@ -109,62 +110,17 @@ export default function GaleriSpotMain() {
       </div>
 
       {/* Filter Tabs & Search Row */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card p-3 rounded-2xl border border-border shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-        {/* Category Filter Pills dengan Warna Kustom */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) =>
-            setActiveTab(value as "ALL" | "Indoor" | "Outdoor")
-          }>
-          <TabsList className="bg-muted py-4.5 h-auto gap-1">
-            <TabsTrigger
-              value="ALL"
-              className="text-xs font-semibold px-3.5 py-3.5 text-muted-foreground data-active:bg-foreground data-active:text-card transition-all  hover:bg-card/60">
-              Semua Spot ({spots.length})
-            </TabsTrigger>
-            <TabsTrigger
-              value="Indoor"
-              className="text-xs font-semibold px-3.5 py-3.5 text-muted-foreground data-active:bg-foreground data-active:text-card  hover:bg-card/60">
-              Area Indoor ({countIndoor})
-            </TabsTrigger>
-            <TabsTrigger
-              value="Outdoor"
-              className="text-xs font-semibold px-3.5 py-3.5 text-muted-foreground data-active:bg-foreground data-active:text-card  hover:bg-card/60">
-              Area Outdoor ({countOutdoor})
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        {/* Search and View Action */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-full sm:w-56">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-            <Input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Cari spot area..."
-              className="pl-9 bg-background border-border text-xs"
-            />
-          </div>
-          <div className="flex items-center gap-1 rounded-lg border border-border bg-background p-1">
-            <Button
-              size="icon-sm"
-              variant={viewMode === "grid" ? "secondary" : "ghost"}
-              aria-label="Grid View"
-              onClick={() => setViewMode("grid")}>
-              <Grid2X2 />
-            </Button>
-
-            <Button
-              size="icon-sm"
-              variant={viewMode === "list" ? "secondary" : "ghost"}
-              aria-label="List View"
-              onClick={() => setViewMode("list")}>
-              <List />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <SpotFilter
+        activeTab={activeTab}
+        searchQuery={searchQuery}
+        viewMode={viewMode}
+        totalSpots={spots.length}
+        countIndoor={countIndoor}
+        countOutdoor={countOutdoor}
+        onTabChange={setActiveTab}
+        onSearchChange={setSearchQuery}
+        onViewModeChange={setViewMode}
+      />
 
       {/* 3-Column Spot Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

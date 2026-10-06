@@ -30,11 +30,8 @@ export default function DialogTambahSpot({
     useActionState(createSpot, INITIAL_STATE_SPOT);
 
   const [preview, setPreview] = useState<Preview | undefined>(undefined);
-  const handledStatus = useRef<string | null>(null);
 
-  // eslint-disable-next-line react-hooks/refs
   const onSubmit = form.handleSubmit((data) => {
-    handledStatus.current = null;
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {

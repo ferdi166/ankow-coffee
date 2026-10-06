@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Grid2X2, ImagePlus, List, Search } from "lucide-react";
 import PageTitle from "@/components/common/page-title";
 import { Button } from "@/components/ui/button";
@@ -63,6 +63,9 @@ export default function GaleriSpotMain() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
+  const handleCreateSuccess = useCallback(() => {
+    setIsCreateDialogOpen(false);
+  }, []);
 
   const handleToggleVisibility = async (id: string, isActive: boolean) => {
     const { error, success } = await supabase
@@ -113,10 +116,7 @@ export default function GaleriSpotMain() {
               </Button>
             }
           />
-          <DialogTambahSpot
-            refetch={refetch}
-            onSuccess={() => setIsCreateDialogOpen(false)}
-          />
+          <DialogTambahSpot refetch={refetch} onSuccess={handleCreateSuccess} />
         </Dialog>
       </div>
 

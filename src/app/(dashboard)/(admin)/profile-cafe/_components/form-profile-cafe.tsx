@@ -58,9 +58,10 @@ export default function FormProfileCafe<T extends FieldValues>({
         />
         <CardContent className="space-y-5">
           <FormImage
+            type="Form Profil Kafe"
             form={form}
             name={"banner_url" as Path<T>}
-            label="Banner Kafe"
+            label="banner kafe"
             preview={preview}
             setPreview={setPreview}
           />

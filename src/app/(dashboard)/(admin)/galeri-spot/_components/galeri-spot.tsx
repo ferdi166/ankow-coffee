@@ -13,6 +13,8 @@ import CardSpot from "./card-spot";
 import { SpotItem } from "@/types/galeri-spot";
 import { getFacilityIcon } from "../_utils/get-facility-icon";
 import SpotFilter from "./spot-filter";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import DialogTambahSpot from "./dialog-tambah-spot";
 
 export default function GaleriSpotMain() {
   const supabase = createClient();
@@ -103,10 +105,17 @@ export default function GaleriSpotMain() {
           title="Manajemen Galeri Spot"
           description="Kelola foto, deskripsi, dan fasilitas area kafe yang tampil di landing page utama."
         />
-        <Button>
-          <ImagePlus />
-          Tambah Spot Baru
-        </Button>
+        <Dialog>
+          <DialogTrigger
+            render={
+              <Button>
+                <ImagePlus />
+                Tambah Spot Baru
+              </Button>
+            }
+          />
+          <DialogTambahSpot />
+        </Dialog>
       </div>
 
       {/* Filter Tabs & Search Row */}

@@ -13,8 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CATEGORY_AREA_LIST } from "@/constants/category-area-constant";
-import { SpotItem } from "@/types/galeri-spot";
 import { Preview } from "@/types/general";
+import { Spot } from "@/validations/spot-validation";
 import { CheckCircle2Icon, Loader2 } from "lucide-react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
@@ -28,7 +28,7 @@ export default function FormSpot<T extends FieldValues>({
   isLoading,
 }: {
   form: UseFormReturn<T>;
-  spot?: SpotItem;
+  spot?: Spot;
   onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => void;
   isLoading: boolean;
   type: "Tambah" | "Edit";

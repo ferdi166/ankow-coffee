@@ -1,10 +1,10 @@
 export const CATEGORY_AREA_LIST = [
   {
-    value: "indoor",
+    value: "Indoor",
     label: "Indoor",
   },
   {
-    value: "outdoor",
+    value: "Outdoor",
     label: "Outdoor",
   },
 ];

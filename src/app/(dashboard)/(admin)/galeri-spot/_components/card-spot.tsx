@@ -54,7 +54,7 @@ export default function CardSpot({
         {/* Badge Kapasitas */}
         <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-card/90 backdrop-blur-sm text-fobg-foreground shadow-xs">
           <Users className="size-3 text-primary" />
-          {spot.capacity}
+          Kapasitas {spot.capacity} Orang
         </span>
       </div>
 

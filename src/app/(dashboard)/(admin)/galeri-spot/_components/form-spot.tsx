@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { CATEGORY_AREA_LIST } from "@/constants/category-area-constant";
 import { SpotItem } from "@/types/galeri-spot";
@@ -35,18 +36,25 @@ export default function FormSpot<T extends FieldValues>({
   setPreview?: (preview: Preview) => void;
 }) {
   return (
-    <DialogContent>
-      <DialogHeader>
-        {type === "Tambah" ? "Tambah Spot Baru" : `Edit Spot`}
+    <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
+      <DialogHeader className="mx-2 mt-2">
+        <DialogTitle>
+          {type === "Tambah" ? "Tambah Spot Baru" : `Edit Spot`}
+        </DialogTitle>
+        <DialogDescription>
+          {type === "Tambah"
+            ? "Lengkapi informasi spot kafe untuk ditampilkan di landing page utama."
+            : "Perbarui informasi, foto, dan fasilitas spot kafe ini."}
+        </DialogDescription>
       </DialogHeader>
-      <DialogDescription>
-        {type === "Tambah"
-          ? "Lengkapi informasi spot kafe untuk ditampilkan di landing page utama."
-          : "Perbarui informasi, foto, dan fasilitas spot kafe ini."}
-      </DialogDescription>
       <form onSubmit={onSubmit} className="space-y-4">
-        <div className="space-y-4 max-h-[50vh] p-1 overflow-y-auto">
-          <FormInput form={form} name={"title" as Path<T>} label="Nama Spot" />
+        <div className="space-y-4 max-h-[50vh] p-2 overflow-y-auto">
+          <FormInput
+            form={form}
+            name={"title" as Path<T>}
+            label="Nama Spot"
+            placeholder="Masukkan Nama Spot..."
+          />
           <div className="grid gap-5 md:grid-cols-2">
             <FormSelect
               form={form}
@@ -58,6 +66,7 @@ export default function FormSpot<T extends FieldValues>({
               form={form}
               name={"capacity_text" as Path<T>}
               label="Kapasitas (Orang)"
+              placeholder="Contoh:25"
             />
           </div>
           <FormInput

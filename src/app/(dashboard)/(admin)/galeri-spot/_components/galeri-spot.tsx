@@ -4,8 +4,6 @@ import React, { useMemo, useState } from "react";
 import { Grid2X2, ImagePlus, List, Search } from "lucide-react";
 import PageTitle from "@/components/common/page-title";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/toast";
@@ -64,6 +62,7 @@ export default function GaleriSpotMain() {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
 
   const handleToggleVisibility = async (id: string, isActive: boolean) => {
     const { error, success } = await supabase
@@ -105,7 +104,7 @@ export default function GaleriSpotMain() {
           title="Manajemen Galeri Spot"
           description="Kelola foto, deskripsi, dan fasilitas area kafe yang tampil di landing page utama."
         />
-        <Dialog>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger
             render={
               <Button>
@@ -114,7 +113,10 @@ export default function GaleriSpotMain() {
               </Button>
             }
           />
-          <DialogTambahSpot />
+          <DialogTambahSpot
+            refetch={refetch}
+            onSuccess={() => setIsCreateDialogOpen(false)}
+          />
         </Dialog>
       </div>
 

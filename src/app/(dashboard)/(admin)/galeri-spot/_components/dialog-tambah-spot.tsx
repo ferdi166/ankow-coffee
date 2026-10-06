@@ -3,12 +3,24 @@ import FormSpot from "./form-spot";
 import { SpotForm, SpotSchemaForm } from "@/validations/spot-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { INITIAL_SPOT, INITIAL_STATE_SPOT } from "@/constants/spot-constant";
-import { startTransition, useActionState, useEffect, useState } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Preview } from "@/types/general";
 import { createSpot } from "../action";
 import { toast } from "@/components/ui/toast";
 
-export default function DialogTambahSpot({ refetch }: { refetch: () => void }) {
+export default function DialogTambahSpot({
+  refetch,
+  onSuccess,
+}: {
+  refetch: () => void;
+  onSuccess: () => void;
+}) {
   const form = useForm<SpotForm>({
     resolver: zodResolver(SpotSchemaForm),
     defaultValues: INITIAL_SPOT,
@@ -18,8 +30,11 @@ export default function DialogTambahSpot({ refetch }: { refetch: () => void }) {
     useActionState(createSpot, INITIAL_STATE_SPOT);
 
   const [preview, setPreview] = useState<Preview | undefined>(undefined);
+  const handledStatus = useRef<string | null>(null);
 
+  // eslint-disable-next-line react-hooks/refs
   const onSubmit = form.handleSubmit((data) => {
+    handledStatus.current = null;
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -56,10 +71,10 @@ export default function DialogTambahSpot({ refetch }: { refetch: () => void }) {
       form.reset();
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreview(undefined);
-      document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click();
+      onSuccess();
       refetch();
     }
-  }, [createSpotState, form, refetch]);
+  }, [createSpotState, form, onSuccess, refetch]);
 
   return (
     <>

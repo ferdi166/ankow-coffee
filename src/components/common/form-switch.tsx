@@ -17,7 +17,7 @@ export default function FormSwitch<T extends FieldValues>({
         <Field
           orientation="horizontal"
           data-invalid={fieldState.invalid}
-          className="items-center justify-between border-t pt-4">
+          className="items-center justify-between border-t pt-4 pr-1">
           <div>
             <FieldLabel>Tampilkan di Website</FieldLabel>
             <FieldDescription>

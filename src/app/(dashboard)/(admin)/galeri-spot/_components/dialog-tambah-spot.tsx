@@ -3,9 +3,10 @@ import FormSpot from "./form-spot";
 import { SpotForm, SpotSchemaForm } from "@/validations/spot-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { INITIAL_SPOT, INITIAL_STATE_SPOT } from "@/constants/spot-constant";
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Preview } from "@/types/general";
 import { createSpot } from "../action";
+import { toast } from "@/components/ui/toast";
 
 export default function DialogTambahSpot({ refetch }: { refetch: () => void }) {
   const form = useForm<SpotForm>({
@@ -18,9 +19,47 @@ export default function DialogTambahSpot({ refetch }: { refetch: () => void }) {
 
   const [preview, setPreview] = useState<Preview | undefined>(undefined);
 
-  const onSubmit = form.handleSubmit(async (data) => {
+  const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (key === "features") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, String(value ?? ""));
+      }
+    });
+
+    startTransition(() => {
+      createSpotAction(formData);
+    });
   });
+
+  useEffect(() => {
+    if (createSpotState.status === "error") {
+      toast.add({
+        type: "error",
+        title: "Tambah Galeri Spot gagal",
+        description: createSpotState.errors?._form?.[0],
+        priority: "high",
+      });
+    }
+
+    if (createSpotState.status === "success") {
+      toast.add({
+        type: "success",
+        title: "Tambah Galeri Spot berhasil",
+        description: "Data spot berhasil ditambahkan",
+      });
+      form.reset();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreview(undefined);
+      document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click();
+      refetch();
+    }
+  }, [createSpotState, form, refetch]);
 
   return (
     <>
@@ -29,6 +68,8 @@ export default function DialogTambahSpot({ refetch }: { refetch: () => void }) {
         form={form}
         isLoading={isPendingCreateSpot}
         onSubmit={onSubmit}
+        preview={preview}
+        setPreview={setPreview}
       />
     </>
   );

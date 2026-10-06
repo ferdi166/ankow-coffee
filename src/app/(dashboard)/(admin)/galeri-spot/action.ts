@@ -12,8 +12,8 @@ export async function createSpot(prevState: SpotFormState, formData: FormData) {
     capacity_text: formData.get("capacity_text"),
     description: formData.get("description"),
     image_url: formData.get("image_url"),
-    features: formData.get("features"),
-    is_active: formData.get("is_active"),
+    features: JSON.parse(String(formData.get("features") ?? "[]")),
+    is_active: formData.get("is_active") === "true",
   });
 
   if (!validateFields.success) {

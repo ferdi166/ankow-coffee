@@ -9,6 +9,8 @@ import Image from "next/image";
 import DialogEditSpot from "./dialog-edit-spot";
 import { Spot } from "@/validations/spot-validation";
 import { useCallback, useState } from "react";
+import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import DialogHapusSpot from "./dialog-hapus-spot";
 
 export default function CardSpot({
   spot,
@@ -126,13 +128,20 @@ export default function CardSpot({
             />
           </Dialog>
 
-          <Button
-            variant="destructive"
-            size="icon-sm"
-            aria-label="Hapus Spot"
-            className="size-8">
-            <Trash2 className="size-4" />
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger
+              render={
+                <Button
+                  variant="destructive"
+                  size="icon-sm"
+                  aria-label="Hapus Spot"
+                  className="size-8">
+                  <Trash2 className="size-4" />
+                </Button>
+              }
+            />
+            <DialogHapusSpot spot={spot} />
+          </AlertDialog>
         </div>
       </CardFooter>
     </Card>

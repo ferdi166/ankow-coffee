@@ -36,10 +36,12 @@ export default function FormSpot<T extends FieldValues>({
   setPreview?: (preview: Preview) => void;
 }) {
   return (
-    <DialogContent className="sm:max-w-[425px] max-h-[90vh]">
+    <DialogContent className="sm:max-w-[75vh] max-h-[90vh]">
       <DialogHeader className="mx-2 mt-2">
-        <DialogTitle>
-          {type === "Tambah" ? "Tambah Spot Baru" : `Edit Spot`}
+        <DialogTitle className="font-semibold">
+          {type === "Tambah"
+            ? "Tambah Spot Baru"
+            : `Edit Spot - ${spot?.title}`}
         </DialogTitle>
         <DialogDescription>
           {type === "Tambah"

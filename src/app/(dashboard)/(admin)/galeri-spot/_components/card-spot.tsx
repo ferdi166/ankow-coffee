@@ -26,8 +26,14 @@ export default function CardSpot({
   refetch: () => void;
 }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const handleEditSuccess = useCallback(() => {
     setIsEditDialogOpen(false);
+  }, []);
+
+  const handleDeleteSuccess = useCallback(() => {
+    setIsDeleteDialogOpen(false);
   }, []);
 
   const category = spot.category_tag === "Outdoor" ? "Outdoor" : "Indoor";
@@ -128,7 +134,9 @@ export default function CardSpot({
             />
           </Dialog>
 
-          <AlertDialog>
+          <AlertDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}>
             <AlertDialogTrigger
               render={
                 <Button
@@ -140,7 +148,11 @@ export default function CardSpot({
                 </Button>
               }
             />
-            <DialogHapusSpot spot={spot} />
+            <DialogHapusSpot
+              spot={spot}
+              refetch={refetch}
+              onSuccess={handleDeleteSuccess}
+            />
           </AlertDialog>
         </div>
       </CardFooter>

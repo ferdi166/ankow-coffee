@@ -1,39 +1,67 @@
-import {
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Spot } from "@/validations/spot-validation";
-import { Trash2 } from "lucide-react";
+import { startTransition, useActionState, useEffect } from "react";
+import { hapusSpot } from "../action";
+import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
+import { toast } from "@/components/ui/toast";
+import DialogHapus from "@/components/common/dialog-hapus";
 
-export default function DialogHapusSpot({ spot }: { spot: Spot }) {
+export default function DialogHapusSpot({
+  spot,
+  refetch,
+  onSuccess,
+}: {
+  spot: Spot;
+  refetch: () => void;
+  onSuccess: () => void;
+}) {
+  const [hapusSpotState, hapusSpotAction, isPendingHapusSpot] = useActionState(
+    hapusSpot,
+    INITIAL_STATE_ACTION,
+  );
+
+  const onSubmit = () => {
+    const formData = new FormData();
+    formData.append("id", spot!.id as string);
+    formData.append("image_url", spot!.image_url as string);
+
+    startTransition(() => {
+      hapusSpotAction(formData);
+    });
+  };
+
+  useEffect(() => {
+    if (hapusSpotState.status === "error") {
+      toast.add({
+        type: "error",
+        title: "Tambah Galeri Spot gagal",
+        description: hapusSpotState.errors?._form?.[0],
+        priority: "high",
+      });
+    }
+
+    if (hapusSpotState.status === "success") {
+      toast.add({
+        type: "success",
+        title: "Hapus Spot berhasil",
+        description: "Data spot berhasil dihapus",
+      });
+      onSuccess();
+      refetch();
+    }
+  }, [hapusSpotState.errors, hapusSpotState.status, onSuccess, refetch]);
+
   return (
-    <AlertDialogContent size="sm">
-      <AlertDialogHeader>
-        <AlertDialogMedia className="bg-destructive/10 text-destructive">
-          <Trash2 />
-        </AlertDialogMedia>
-        <AlertDialogTitle className="font-semibold">
-          Hapus Spot Ini?
-        </AlertDialogTitle>
-        <AlertDialogDescription>
-          Apakah Anda yakin ingin menghapus Spot{" "}
-          <span className="font-semibold text-foreground">{spot.title}</span>{" "}
-          ini? Akses staf ini ke CMS akan langsung dicabut dan tindakan ini
-          tidak dapat dibatalkan.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        <AlertDialogCancel variant="outline">Batal</AlertDialogCancel>
-        <AlertDialogAction className="bg-destructive text-primary-foreground">
-          Hapus
-        </AlertDialogAction>
-      </AlertDialogFooter>
-    </AlertDialogContent>
+    <DialogHapus
+      title="Spot"
+      description={
+        <>
+          Apakah Anda yakin ingin menghapus spot{" "}
+          <span className="font-semibold text-foreground">{spot.title}</span>?
+          Data spot dan gambar terkait akan dihapus secara permanen.
+        </>
+      }
+      onSubmit={onSubmit}
+      isLoading={isPendingHapusSpot}
+    />
   );
 }

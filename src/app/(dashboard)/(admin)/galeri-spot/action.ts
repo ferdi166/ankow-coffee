@@ -1,6 +1,6 @@
 "use server";
 
-import { uploadFile } from "@/actions/storage-action";
+import { deleteFile, uploadFile } from "@/actions/storage-action";
 import { createClient } from "@/lib/supabase/server";
 import { SpotFormState } from "@/types/spot";
 import { SpotSchemaForm } from "@/validations/spot-validation";
@@ -144,6 +144,41 @@ export async function editSpot(prevState: SpotFormState, formData: FormData) {
       features: validateFields.data.features,
       is_active: validateFields.data.is_active,
     })
+    .eq("id", formData.get("id"));
+
+  if (error) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [error.message],
+      },
+    };
+  }
+
+  return {
+    status: "success",
+  };
+}
+
+export async function hapusSpot(prevState: SpotFormState, formData: FormData) {
+  const supabase = await createClient();
+  const image = formData.get("image_url") as string;
+  const { status, errors } = await deleteFile("galleries", image);
+
+  if (status === "error") {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [errors?._form?.[0] ?? "Unknown error"],
+      },
+    };
+  }
+
+  const { error } = await supabase
+    .from("galleries")
+    .delete()
     .eq("id", formData.get("id"));
 
   if (error) {

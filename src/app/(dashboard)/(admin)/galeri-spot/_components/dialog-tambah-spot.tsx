@@ -65,7 +65,13 @@ export default function DialogTambahSpot({
       onSuccess();
       refetch();
     }
-  }, [createSpotState, form, onSuccess, refetch]);
+  }, [
+    createSpotState.errors,
+    createSpotState.status,
+    form,
+    onSuccess,
+    refetch,
+  ]);
 
   return (
     <>

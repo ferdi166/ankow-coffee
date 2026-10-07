@@ -2,7 +2,13 @@ import { Spot, SpotForm, SpotSchemaForm } from "@/validations/spot-validation";
 import FormSpot from "./form-spot";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { startTransition, useActionState, useEffect, useState } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { editSpot } from "../action";
 import { INITIAL_STATE_SPOT } from "@/constants/spot-constant";
 import { Preview } from "@/types/general";
@@ -47,7 +53,11 @@ export default function DialogEditSpot({
     };
   });
 
+  const hasHandledResult = useRef(false);
+
+  // eslint-disable-next-line react-hooks/refs
   const onSubmit = form.handleSubmit((data) => {
+    hasHandledResult.current = false;
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -69,6 +79,16 @@ export default function DialogEditSpot({
   });
 
   useEffect(() => {
+    if (
+      (editSpotState.status !== "success" &&
+        editSpotState.status !== "error") ||
+      hasHandledResult.current
+    ) {
+      return;
+    }
+
+    hasHandledResult.current = true;
+
     if (editSpotState.status === "error") {
       toast.add({
         type: "error",
@@ -76,20 +96,18 @@ export default function DialogEditSpot({
         description: editSpotState.errors?._form?.[0],
         priority: "high",
       });
+
+      return;
     }
 
-    if (editSpotState.status === "success") {
-      toast.add({
-        type: "success",
-        title: "Edit Galeri Spot berhasil",
-        description: "Data spot berhasil dirubah",
-      });
-      form.reset();
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setPreview(undefined);
-      onSuccess();
-      refetch();
-    }
+    toast.add({
+      type: "success",
+      title: "Edit Galeri Spot berhasil",
+      description: "Data spot berhasil dirubah",
+    });
+
+    onSuccess();
+    refetch();
   }, [editSpotState, form, onSuccess, refetch]);
 
   return (

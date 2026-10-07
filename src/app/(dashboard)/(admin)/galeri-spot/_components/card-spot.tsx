@@ -3,11 +3,12 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { FacilityIconResolver, SpotItem } from "@/types/galeri-spot";
+import { FacilityIconResolver } from "@/types/galeri-spot";
 import { Edit, Trash2, Users } from "lucide-react";
 import Image from "next/image";
 import DialogEditSpot from "./dialog-edit-spot";
 import { Spot } from "@/validations/spot-validation";
+import { useCallback, useState } from "react";
 
 export default function CardSpot({
   spot,
@@ -15,25 +16,21 @@ export default function CardSpot({
   getFacilityIcon,
   handleToggleVisibility,
   refetch,
-  handleCreateSuccess,
-  onEdit,
-  onDelete,
-  isCreateDialogOpen,
-  setIsCreateDialogOpen,
-  currentData,
 }: {
-  spot: SpotItem;
+  spot: Spot;
   viewMode: "grid" | "list";
   getFacilityIcon: FacilityIconResolver;
   handleToggleVisibility: (id: string, isActive: boolean) => void;
   refetch: () => void;
-  handleCreateSuccess: () => void;
-  currentData: Spot;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  isCreateDialogOpen?: boolean;
-  setIsCreateDialogOpen?: () => void;
 }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const handleEditSuccess = useCallback(() => {
+    setIsEditDialogOpen(false);
+  }, []);
+
+  const category = spot.category_tag === "Outdoor" ? "Outdoor" : "Indoor";
+  const categoryIcon = category === "Outdoor" ? "park" : "building-2";
+
   return (
     <Card
       key={spot.id}
@@ -46,7 +43,7 @@ export default function CardSpot({
           viewMode === "list" ? "h-48 md:h-auto md:w-64" : "h-48 w-full"
         }`}>
         <Image
-          src={spot.imageUrl}
+          src={typeof spot.image_url === "string" ? spot.image_url : ""}
           alt={spot.title}
           fill
           loading="eager"
@@ -59,15 +56,13 @@ export default function CardSpot({
         />
         {/* Badge Kategori */}
         <span className="absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-foreground/80 backdrop-blur-sm text-card">
-          <span className="text-primary">
-            {getFacilityIcon(spot.categoryIcon)}
-          </span>
-          {spot.category}
+          <span className="text-primary">{getFacilityIcon(categoryIcon)}</span>
+          {category}
         </span>
         {/* Badge Kapasitas */}
         <span className="absolute top-3 right-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-card/90 backdrop-blur-sm text-fobg-foreground shadow-xs">
           <Users className="size-3 text-primary" />
-          Kapasitas {spot.capacity} Orang
+          Kapasitas {spot.capacity_text} Orang
         </span>
       </div>
 
@@ -82,9 +77,9 @@ export default function CardSpot({
           </p>
         </div>
         <div className="flex flex-wrap gap-1.5 pt-1">
-          {spot.facilities.map((facility, idx) => (
+          {spot.features.map((facility, idx) => (
             <span
-              key={idx}
+              key={`${facility.icon}-${facility.label}-${idx}`}
               className="px-2 py-0.5 rounded-md bg-muted text-[11px] font-medium text-muted-foreground flex items-center gap-1">
               <span className="text-primary">
                 {getFacilityIcon(facility.icon)}
@@ -100,7 +95,7 @@ export default function CardSpot({
         <div className="flex items-center gap-2">
           <Switch
             id={`visible-${spot.id}`}
-            checked={spot.isVisible}
+            checked={spot.is_active}
             onCheckedChange={(checked) =>
               handleToggleVisibility(spot.id, checked)
             }
@@ -113,24 +108,21 @@ export default function CardSpot({
         </div>
 
         <div className="flex gap-2">
-          <Dialog
-            open={isCreateDialogOpen}
-            onOpenChange={setIsCreateDialogOpen}>
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <DialogTrigger
               render={
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-8 px-3 text-xs"
-                  onClick={onEdit}>
+                  className="h-8 px-3 text-xs">
                   <Edit className="size-4" />
                 </Button>
               }
             />
             <DialogEditSpot
-              spot={currentData}
+              spot={spot}
               refetch={refetch}
-              onSuccess={handleCreateSuccess}
+              onSuccess={handleEditSuccess}
             />
           </Dialog>
 
@@ -138,8 +130,7 @@ export default function CardSpot({
             variant="destructive"
             size="icon-sm"
             aria-label="Hapus Spot"
-            className="size-8"
-            onClick={onDelete}>
+            className="size-8">
             <Trash2 className="size-4" />
           </Button>
         </div>

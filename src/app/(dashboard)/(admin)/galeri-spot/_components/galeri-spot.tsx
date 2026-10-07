@@ -13,6 +13,7 @@ import { getFacilityIcon } from "../_utils/get-facility-icon";
 import SpotFilter from "./spot-filter";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DialogTambahSpot from "./dialog-tambah-spot";
+import { Spot } from "@/validations/spot-validation";
 
 export default function GaleriSpotMain() {
   const supabase = createClient();
@@ -37,23 +38,17 @@ export default function GaleriSpotMain() {
     },
   });
 
-  const spots: SpotItem[] = useMemo(() => {
-    return (galeri_spot ?? []).map((item) => {
-      const category = item.category_tag === "Outdoor" ? "Outdoor" : "Indoor";
-
-      return {
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        category,
-        badgeCategory: `${category} Area`,
-        categoryIcon: category === "Outdoor" ? "park" : "building-2",
-        capacity: item.capacity_text,
-        imageUrl: item.image_url,
-        isVisible: item.is_active,
-        facilities: item.features ?? [],
-      };
-    });
+  const spots: Spot[] = useMemo(() => {
+    return (galeri_spot ?? []).map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      category_tag: item.category_tag,
+      capacity_text: item.capacity_text,
+      image_url: item.image_url,
+      features: item.features ?? [],
+      is_active: item.is_active,
+    }));
   }, [galeri_spot]);
 
   // const [spots, setSpots] = useState<SpotItem[]>(SPOT_DATA);
@@ -89,15 +84,24 @@ export default function GaleriSpotMain() {
   };
 
   const filteredSpots = spots.filter((spot) => {
-    const matchesTab = activeTab === "ALL" ? true : spot.category === activeTab;
+    const category = spot.category_tag === "Outdoor" ? "Outdoor" : "Indoor";
+
+    const matchesTab = activeTab === "ALL" || category === activeTab;
+
     const matchesSearch = spot.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
+
     return matchesTab && matchesSearch;
   });
 
-  const countIndoor = spots.filter((s) => s.category === "Indoor").length;
-  const countOutdoor = spots.filter((s) => s.category === "Outdoor").length;
+  const countIndoor = spots.filter(
+    (spot) => spot.category_tag !== "Outdoor",
+  ).length;
+
+  const countOutdoor = spots.filter(
+    (spot) => spot.category_tag === "Outdoor",
+  ).length;
 
   return (
     <main className="p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
@@ -137,12 +141,12 @@ export default function GaleriSpotMain() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredSpots?.map((spot) => (
           <CardSpot
-            currentData={galeri_spot}
             key={spot.id}
             spot={spot}
             viewMode={viewMode}
             getFacilityIcon={getFacilityIcon}
             handleToggleVisibility={handleToggleVisibility}
+            refetch={refetch}
           />
         ))}
       </div>

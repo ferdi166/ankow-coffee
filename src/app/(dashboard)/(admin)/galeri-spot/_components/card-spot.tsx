@@ -1,25 +1,38 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { FacilityIconResolver, SpotItem } from "@/types/galeri-spot";
 import { Edit, Trash2, Users } from "lucide-react";
 import Image from "next/image";
+import DialogEditSpot from "./dialog-edit-spot";
+import { Spot } from "@/validations/spot-validation";
 
 export default function CardSpot({
   spot,
   viewMode,
   getFacilityIcon,
   handleToggleVisibility,
+  refetch,
+  handleCreateSuccess,
   onEdit,
   onDelete,
+  isCreateDialogOpen,
+  setIsCreateDialogOpen,
+  currentData,
 }: {
   spot: SpotItem;
   viewMode: "grid" | "list";
   getFacilityIcon: FacilityIconResolver;
   handleToggleVisibility: (id: string, isActive: boolean) => void;
+  refetch: () => void;
+  handleCreateSuccess: () => void;
+  currentData: Spot;
   onEdit?: () => void;
   onDelete?: () => void;
+  isCreateDialogOpen?: boolean;
+  setIsCreateDialogOpen?: () => void;
 }) {
   return (
     <Card
@@ -100,13 +113,26 @@ export default function CardSpot({
         </div>
 
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 px-3 text-xs"
-            onClick={onEdit}>
-            <Edit className="size-4" />
-          </Button>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger
+              render={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-3 text-xs"
+                  onClick={onEdit}>
+                  <Edit className="size-4" />
+                </Button>
+              }
+            />
+            <DialogEditSpot
+              spot={currentData}
+              refetch={refetch}
+              onSuccess={handleCreateSuccess}
+            />
+          </Dialog>
 
           <Button
             variant="destructive"

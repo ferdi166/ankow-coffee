@@ -2,13 +2,20 @@ import { Spot, SpotForm, SpotSchemaForm } from "@/validations/spot-validation";
 import FormSpot from "./form-spot";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { startTransition, useActionState, useEffect, useState } from "react";
+import { editSpot } from "../action";
+import { INITIAL_STATE_SPOT } from "@/constants/spot-constant";
+import { Preview } from "@/types/general";
+import { toast } from "@/components/ui/toast";
 
 export default function DialogEditSpot({
   spot,
   refetch,
+  onSuccess,
 }: {
   spot: Spot;
   refetch: () => void;
+  onSuccess: () => void;
 }) {
   const form = useForm<SpotForm>({
     resolver: zodResolver(SpotSchemaForm),
@@ -23,13 +30,75 @@ export default function DialogEditSpot({
     },
   });
 
+  const [editSpotState, editSpotAction, isPendingEditSpot] = useActionState(
+    editSpot,
+    INITIAL_STATE_SPOT,
+  );
+
+  const [preview, setPreview] = useState<Preview | undefined>(() => {
+    const image_url = spot.image_url;
+
+    if (typeof image_url !== "string" || !image_url) {
+      return undefined;
+    }
+
+    return {
+      displayUrl: image_url,
+    };
+  });
+
+  const onSubmit = form.handleSubmit((data) => {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (key === "features") {
+        formData.append(key, JSON.stringify(value));
+      } else {
+        formData.append(key, String(value ?? ""));
+      }
+    });
+
+    formData.append("id", spot.id);
+    formData.append("old_image_url", spot.image_url ?? "");
+
+    startTransition(() => {
+      editSpotAction(formData);
+    });
+  });
+
+  useEffect(() => {
+    if (editSpotState.status === "error") {
+      toast.add({
+        type: "error",
+        title: "Edit Galeri Spot gagal",
+        description: editSpotState.errors?._form?.[0],
+        priority: "high",
+      });
+    }
+
+    if (editSpotState.status === "success") {
+      toast.add({
+        type: "success",
+        title: "Edit Galeri Spot berhasil",
+        description: "Data spot berhasil dirubah",
+      });
+      form.reset();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPreview(undefined);
+      onSuccess();
+      refetch();
+    }
+  }, [editSpotState, form, onSuccess, refetch]);
+
   return (
     <>
       <FormSpot
         type="Edit"
         form={form}
         spot={spot}
-        isLoading={isPendingCreateSpot}
+        isLoading={isPendingEditSpot}
         onSubmit={onSubmit}
         preview={preview}
         setPreview={setPreview}

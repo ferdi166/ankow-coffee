@@ -20,7 +20,7 @@ export const MenuSchema = z.object({
   price: z.number(),
   image_url: z.string(),
   is_available: z.boolean(),
-  categories: z.array(CategorySchema),
+  categories: CategorySchema,
 });
 
 export type MenuForm = z.infer<typeof MenuFormSchema>;

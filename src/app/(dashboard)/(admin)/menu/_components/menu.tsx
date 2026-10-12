@@ -34,7 +34,8 @@ export default function Menu() {
         .from("menu_items")
         .select(
           "id, categories!menu_items_category_id_fkey (id, name), name, description, price, image_url, is_available",
-        );
+        )
+        .overrideTypes<Menu[], { merge: false }>();
 
       if (error) {
         throw error;
@@ -53,6 +54,8 @@ export default function Menu() {
     imageUrl: item.image_url ?? undefined,
     isAvailable: item.is_available,
   }));
+
+  console.log(menu);
 
   return (
     <div className="p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">

@@ -154,9 +154,16 @@ export default function MenuTable({ items }: MenuTableProps) {
                   <span
                     className={
                       item.isAvailable
-                        ? "text-emerald-600"
-                        : "text-muted-foreground"
+                        ? "inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600"
+                        : "inline-flex items-center gap-1.5 rounded-full border border-muted bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
                     }>
+                    <span
+                      className={
+                        item.isAvailable
+                          ? "size-1.5 rounded-full bg-emerald-500"
+                          : "size-1.5 rounded-full bg-muted-foreground"
+                      }
+                    />
                     {item.isAvailable ? "Tersedia" : "Stok Habis"}
                   </span>
                 </TableCell>

@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import { Grid2X2, ImagePlus, List, Search } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 import PageTitle from "@/components/common/page-title";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/toast";
 import CardSpot from "./card-spot";
-import { SpotItem } from "@/types/galeri-spot";
 import { getFacilityIcon } from "../_utils/get-facility-icon";
 import SpotFilter from "./spot-filter";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";

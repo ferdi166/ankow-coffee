@@ -2,6 +2,19 @@ import PageTitle from "@/components/common/page-title";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import MenuTable from "./menu-table";
+
+const menuItems = [
+  {
+    id: "1",
+    name: "Kopi Susu Ankow",
+    description: "Double shot espresso, fresh milk, gula aren murni",
+    category: "Espresso Based",
+    price: 18000,
+    imageUrl: "/images/kopi-susu.jpg",
+    isAvailable: true,
+  },
+];
 
 export default function Menu() {
   return (
@@ -22,6 +35,7 @@ export default function Menu() {
           />
         </Dialog>
       </div>
+      <MenuTable items={menuItems} />
     </div>
   );
 }

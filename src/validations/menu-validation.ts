@@ -5,7 +5,7 @@ const CategorySchema = z.object({
   name: z.string(),
 });
 
-export const MenuFormSchema = z.object({
+export const MenuSchemaForm = z.object({
   name: z.string().min(1, "Nama Menu wajib diisi"),
   description: z.string().min(1, "Deskripsi wajib diisi"),
   price: z.number().min(1, "Harga wajib diisi"),
@@ -23,5 +23,5 @@ export const MenuSchema = z.object({
   categories: CategorySchema,
 });
 
-export type MenuForm = z.infer<typeof MenuFormSchema>;
+export type MenuForm = z.infer<typeof MenuSchemaForm>;
 export type Menu = z.infer<typeof MenuSchema> & { id: string };

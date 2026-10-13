@@ -31,34 +31,45 @@ export default function FormSelect<T extends FieldValues>({
     <Controller
       control={form.control}
       name={name}
-      render={({ field, fieldState }) => (
-        <Field>
-          <FieldLabel>{label}</FieldLabel>
-          <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger
-              className={cn("w-full h-10! capitalize", {
-                "border-red-500": fieldState.error?.message,
-              })}>
-              <SelectValue placeholder={`Pilih ${label}`} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{label}</SelectLabel>
-                {selectItem.map((item) => (
-                  <SelectItem
-                    key={item.label}
-                    value={item.value}
-                    disabled={item.disabled}
-                    className="capitalize">
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-        </Field>
-      )}
+      render={({ field, fieldState }) => {
+        const selectedItem = selectItem.find(
+          (item) => item.value === field.value,
+        );
+
+        return (
+          <Field>
+            <FieldLabel>{label}</FieldLabel>
+
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger
+                className={cn("w-full h-10! capitalize", {
+                  "border-red-500": fieldState.error?.message,
+                })}>
+                <SelectValue placeholder={`Pilih ${label}`}>
+                  {selectedItem?.label}
+                </SelectValue>
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>{label}</SelectLabel>
+                  {selectItem.map((item) => (
+                    <SelectItem
+                      key={item.value}
+                      value={item.value}
+                      disabled={item.disabled}
+                      className="capitalize">
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        );
+      }}
     />
   );
 }

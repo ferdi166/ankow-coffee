@@ -1,4 +1,3 @@
-import FormFacilities from "@/components/common/form-facilities";
 import FormImage from "@/components/common/form-image";
 import FormInput from "@/components/common/form-input";
 import FormSelect from "@/components/common/form-select";
@@ -12,15 +11,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CATEGORY_AREA_LIST } from "@/constants/category-area-constant";
+import { createClient } from "@/lib/supabase/client";
 import { Preview } from "@/types/general";
-import { Spot } from "@/validations/spot-validation";
+import { Menu } from "@/validations/menu-validation";
+import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, Loader2 } from "lucide-react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
 export default function FormMenu<T extends FieldValues>({
   form,
-  spot,
+  menu,
   type,
   preview,
   setPreview,
@@ -28,20 +28,34 @@ export default function FormMenu<T extends FieldValues>({
   isLoading,
 }: {
   form: UseFormReturn<T>;
-  spot?: Spot;
+  menu?: Menu;
   onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => void;
   isLoading: boolean;
   type: "Tambah" | "Edit";
   preview?: Preview;
   setPreview?: (preview: Preview) => void;
 }) {
+  const supabase = createClient();
+  const { data: categories } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, name");
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+  });
+
   return (
     <DialogContent className="sm:max-w-[75vh] max-h-[90vh]">
       <DialogHeader className="mx-2 mt-2">
         <DialogTitle className="font-semibold">
-          {type === "Tambah"
-            ? "Tambah Menu Baru"
-            : `Edit Menu - ${spot?.title}`}
+          {type === "Tambah" ? "Tambah Menu Baru" : `Edit Menu - ${menu?.name}`}
         </DialogTitle>
         <DialogDescription>
           {type === "Tambah"
@@ -68,7 +82,12 @@ export default function FormMenu<T extends FieldValues>({
               form={form}
               name={"category_id" as Path<T>}
               label="Kategori Menu"
-              selectItem={CATEGORY_AREA_LIST}
+              selectItem={
+                categories?.map((item) => ({
+                  label: item.name,
+                  value: item.id,
+                })) ?? []
+              }
             />
           </div>
           <FormInput
@@ -89,8 +108,8 @@ export default function FormMenu<T extends FieldValues>({
           <FormSwitch
             form={form}
             name={"is_active" as Path<T>}
-            label="Tersedia Langsung"
-            description="Bisa dipesan pelanggan."
+            label="Stok"
+            description="Tersedia, bisa langsung dipesan pelanggan."
           />
         </div>
         <DialogFooter>

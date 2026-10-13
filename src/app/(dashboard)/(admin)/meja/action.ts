@@ -11,9 +11,9 @@ export async function createMeja(
   prevState: TableFormState,
   formData: FormData,
 ) {
-  let validateFields = TableSchemaForm.safeParse({
+  const validateFields = TableSchemaForm.safeParse({
     table_number: formData.get("table_number"),
-    area_zone: formData.get("description"),
+    area_zone: formData.get("area_zone"),
     capacity: formData.get("capacity"),
     is_active: formData.get("is_active") === "true",
   });
@@ -30,11 +30,16 @@ export async function createMeja(
 
   const supabase = await createClient();
 
+  const tableNumber = validateFields.data.table_number;
+
+  const orderingUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/table/${encodeURIComponent(tableNumber)}`;
+
   const { error } = await supabase.from("tables").insert({
     table_number: validateFields.data.table_number,
     area_zone: validateFields.data.area_zone,
     capacity: validateFields.data.capacity,
     is_active: validateFields.data.is_active,
+    qr_code_url: orderingUrl,
   });
 
   if (error) {

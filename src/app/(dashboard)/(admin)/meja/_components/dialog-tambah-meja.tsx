@@ -1,13 +1,8 @@
 import { useForm } from "react-hook-form";
-import { SpotForm, SpotSchemaForm } from "@/validations/spot-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState, useEffect, useState } from "react";
-import { Preview } from "@/types/general";
+import { startTransition, useActionState, useEffect } from "react";
 import { createMeja } from "../action";
 import { toast } from "@/components/ui/toast";
-import FormMenu from "./form-menu";
-import { INITIAL_MENU, INITIAL_STATE_MENU } from "@/constants/menu-constant";
-import { MenuForm, MenuSchemaForm } from "@/validations/menu-validation";
 import { TableForm, TableSchemaForm } from "@/validations/table-validation";
 import { INITIAL_STATE_TABLE, INITIAL_TABLE } from "@/constants/meja-constant";
 import FormMeja from "./form-meja";
@@ -28,6 +23,7 @@ export default function DialogTambahMeja({
     useActionState(createMeja, INITIAL_STATE_TABLE);
 
   const onSubmit = form.handleSubmit((data) => {
+    // console.log(data);
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {

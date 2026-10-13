@@ -53,20 +53,20 @@ export default function FormMeja<T extends FieldValues>({
         <div className="space-y-4 max-h-[50vh] p-2 overflow-y-auto">
           <FormInput
             form={form}
-            name={"name" as Path<T>}
+            name={"table_number" as Path<T>}
             label="Nomor Meja"
             placeholder="Masukkan Nomor Meja..."
           />
           <FormSelect
             form={form}
-            name={"category_id" as Path<T>}
+            name={"area_zone" as Path<T>}
             label="Kategori Area"
             selectItem={CATEGORY_AREA_LIST}
           />
           <FormCapacity form={form} name={"capacity" as Path<T>} />
           <FormSwitch
             form={form}
-            name={"is_available" as Path<T>}
+            name={"is_active" as Path<T>}
             label="Status"
             description="Meja langsung aktif untuk dipesan pelanggan."
           />

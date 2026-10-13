@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { Download, Edit, Trash2, Users } from "lucide-react";
-
 import {
   Card,
   CardContent,
@@ -12,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table } from "@/validations/table-validation";
+import QRCode from "react-qr-code";
 
 type MejaCardProps = {
   item: Table;
@@ -52,13 +51,7 @@ export default function MejaCard({ item }: MejaCardProps) {
         <div className="flex min-h-52 flex-col items-center justify-center rounded-xl bg-muted/40 p-4">
           {item.qr_code_url ? (
             <div className="rounded-xl bg-background p-2.5 shadow-sm">
-              <Image
-                src={item.qr_code_url}
-                alt={`QR Code Meja ${item.table_number}`}
-                width={100}
-                height={100}
-                className="size-32 object-contain"
-              />
+              <QRCode value={item.qr_code_url} size={128} level="H" />
             </div>
           ) : (
             <span className="text-xs text-muted-foreground">

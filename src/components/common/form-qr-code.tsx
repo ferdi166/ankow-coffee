@@ -5,7 +5,7 @@ import { Download, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table } from "@/validations/table-validation";
 
-const BASE_URL = "https://localhost:3000/table";
+const BASE_URL = `${process.env.NEXT_PUBLIC_SITE_URL}/table`;
 
 export default function FormQrCode({
   type,

@@ -8,7 +8,8 @@ import { Table } from "@/validations/table-validation";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { useCallback, useState } from "react";
-import MejaTable from "./meja-table";
+import MejaDisplay from "./meja-display";
+import DialogTambahMeja from "./dialog-tambah-meja";
 
 export default function Meja() {
   const supabase = createClient();
@@ -52,9 +53,10 @@ export default function Meja() {
               </Button>
             }
           />
+          <DialogTambahMeja refetch={refetch} onSuccess={handleCreateSuccess} />
         </Dialog>
       </div>
-      <MejaTable items={tables ?? []} refetch={refetch} />
+      <MejaDisplay items={tables ?? []} refetch={refetch} />
     </div>
   );
 }

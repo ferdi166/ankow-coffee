@@ -18,14 +18,7 @@ type MejaTableProps = {
 
 const LIMIT = 6;
 
-const AREA_TABS = [
-  { value: "all", label: "Semua Meja" },
-  { value: "Indoor", label: "Indoor Area" },
-  { value: "Outdoor", label: "Outdoor Area" },
-  { value: "WFC", label: "WFC Mezzanine" },
-];
-
-export default function MejaTable({ items, refetch }: MejaTableProps) {
+export default function MejaDisplay({ items, refetch }: MejaTableProps) {
   const [area, setArea] = useState("all");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,7 +66,6 @@ export default function MejaTable({ items, refetch }: MejaTableProps) {
             <TabsTrigger value="all">Semua Meja</TabsTrigger>
             <TabsTrigger value="Indoor">Indoor Area</TabsTrigger>
             <TabsTrigger value="Outdoor">Outdoor Area</TabsTrigger>
-            <TabsTrigger value="WFC">WFC Mezzanine</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>

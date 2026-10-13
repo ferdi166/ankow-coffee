@@ -120,7 +120,7 @@ export default function FormMenu<T extends FieldValues>({
             ) : (
               <CheckCircle2Icon />
             )}
-            {isLoading ? "Menyimpan..." : "Simpan Spot"}
+            {isLoading ? "Menyimpan..." : "Simpan Menu"}
           </Button>
         </DialogFooter>
       </form>

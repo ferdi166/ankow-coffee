@@ -53,6 +53,9 @@ export default function MejaDisplay({ items, refetch }: MejaTableProps) {
     }
   }, [currentPage, totalPages]);
 
+  console.log(items);
+  console.log(filteredItems);
+
   return (
     <Card className="gap-0 overflow-hidden p-0">
       <div className="border-b bg-muted/30 px-6 pt-3">

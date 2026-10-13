@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Table } from "@/validations/table-validation";
 import QRCode from "react-qr-code";
+import { useRef } from "react";
+import { toPng } from "html-to-image";
 
 type MejaCardProps = {
   item: Table;
@@ -18,52 +20,63 @@ type MejaCardProps = {
 };
 
 export default function MejaCard({ item }: MejaCardProps) {
-  const handleDownload = () => {
-    if (!item.qr_code_url) return;
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  const cardExportRef = useRef<HTMLDivElement>(null);
+
+  const handleDownload = async () => {
+    if (!cardExportRef.current) return;
+
+    const dataUrl = await toPng(cardExportRef.current, {
+      pixelRatio: 2,
+      backgroundColor: "#ffffff",
+      cacheBust: true,
+    });
 
     const link = document.createElement("a");
-    link.href = item.qr_code_url;
     link.download = `qr-meja-${item.table_number}.png`;
-    link.target = "_blank";
+    link.href = dataUrl;
     link.click();
   };
 
   return (
     <Card className="gap-0 overflow-hidden rounded-xl py-0 shadow-sm transition-shadow hover:shadow-md">
-      <CardHeader className="flex-row items-center justify-between gap-3 px-5 py-5">
-        <CardTitle className="text-base font-bold">
-          Meja {item.table_number}
-        </CardTitle>
+      <div ref={cardExportRef}>
+        <CardHeader className="flex-row items-center justify-between gap-3 px-5 py-5">
+          <CardTitle className="text-base font-bold">
+            Meja {item.table_number}
+          </CardTitle>
 
-        <div className="flex items-center gap-1">
-          <span className="rounded-full bg-muted px-2 py-1 text-xs">
-            {item.area_zone}
-          </span>
-
-          <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-xs text-amber-800">
-            <Users className="size-3" />
-            {item.capacity} Pax
-          </span>
-        </div>
-      </CardHeader>
-
-      <CardContent className="px-5 pb-5">
-        <div className="flex min-h-52 flex-col items-center justify-center rounded-xl bg-muted/40 p-4">
-          {item.qr_code_url ? (
-            <div className="rounded-xl bg-background p-2.5 shadow-sm">
-              <QRCode value={item.qr_code_url} size={128} level="H" />
-            </div>
-          ) : (
-            <span className="text-xs text-muted-foreground">
-              QR Code belum tersedia
+          <div className="flex items-center gap-1">
+            <span className="rounded-full bg-muted px-2 py-1 text-xs">
+              {item.area_zone}
             </span>
-          )}
 
-          <span className="mt-2.5 text-xs text-muted-foreground">
-            ankowcoffee.id/table/{item.table_number}
-          </span>
-        </div>
-      </CardContent>
+            <span className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-1 text-xs text-amber-800">
+              <Users className="size-3" />
+              {item.capacity} Pax
+            </span>
+          </div>
+        </CardHeader>
+
+        <CardContent className="px-5 pb-5">
+          <div className="flex min-h-52 flex-col items-center justify-center rounded-xl bg-muted/40 p-4">
+            {item.qr_code_url ? (
+              <div className="rounded-xl bg-background p-2.5 shadow-sm">
+                <QRCode value={item.qr_code_url} size={128} level="H" />
+              </div>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                QR Code belum tersedia
+              </span>
+            )}
+
+            <span className="mt-2.5 text-xs text-muted-foreground">
+              {process.env.NEXT_PUBLIC_SITE_URL}/table/{item.table_number}
+            </span>
+          </div>
+        </CardContent>
+      </div>
 
       <CardFooter className="justify-between border-t px-5 py-4">
         <span

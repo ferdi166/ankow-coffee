@@ -13,16 +13,21 @@ import { Table } from "@/validations/table-validation";
 import QRCode from "react-qr-code";
 import { useRef } from "react";
 import { toPng } from "html-to-image";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import DialogEditMeja from "./dialog-edit-meja";
+import { useState, useCallback } from "react";
 
 type MejaCardProps = {
   item: Table;
   refetch: () => void;
 };
 
-export default function MejaCard({ item }: MejaCardProps) {
+export default function MejaCard({ item, refetch }: MejaCardProps) {
   const qrRef = useRef<HTMLDivElement>(null);
 
   const cardExportRef = useRef<HTMLDivElement>(null);
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleDownload = async () => {
     if (!cardExportRef.current) return;
@@ -38,6 +43,10 @@ export default function MejaCard({ item }: MejaCardProps) {
     link.href = dataUrl;
     link.click();
   };
+
+  const handleEditSuccess = useCallback(() => {
+    setIsEditDialogOpen(false);
+  }, []);
 
   return (
     <Card className="gap-0 overflow-hidden rounded-xl py-0 shadow-sm transition-shadow hover:shadow-md">
@@ -100,13 +109,24 @@ export default function MejaCard({ item }: MejaCardProps) {
             <Download className="size-3.5" />
           </Button>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground"
-            aria-label="Edit Meja">
-            <Edit className="size-3.5" />
-          </Button>
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-muted-foreground"
+                  aria-label="Edit Meja">
+                  <Edit className="size-3.5" />
+                </Button>
+              }
+            />
+            <DialogEditMeja
+              table={item}
+              refetch={refetch}
+              onSuccess={handleEditSuccess}
+            />
+          </Dialog>
 
           <Button
             variant="ghost"

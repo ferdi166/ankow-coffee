@@ -23,7 +23,6 @@ export default function DialogTambahMeja({
     useActionState(createMeja, INITIAL_STATE_TABLE);
 
   const onSubmit = form.handleSubmit((data) => {
-    // console.log(data);
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {

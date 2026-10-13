@@ -57,14 +57,12 @@ export async function createMeja(
   };
 }
 
-export async function editMenu(prevState: MenuFormState, formData: FormData) {
-  let validateFields = MenuSchemaForm.safeParse({
-    name: formData.get("name"),
-    description: formData.get("description"),
-    price: formData.get("price"),
-    image_url: formData.get("image_url"),
-    category_id: formData.get("category_id"),
-    is_available: formData.get("is_available") === "true",
+export async function editMeja(prevState: TableFormState, formData: FormData) {
+  const validateFields = TableSchemaForm.safeParse({
+    table_number: formData.get("table_number"),
+    area_zone: formData.get("area_zone"),
+    capacity: formData.get("capacity"),
+    is_active: formData.get("is_active") === "true",
   });
 
   if (!validateFields.success) {
@@ -77,48 +75,20 @@ export async function editMenu(prevState: MenuFormState, formData: FormData) {
     };
   }
 
-  if (validateFields.data.image_url instanceof File) {
-    const oldImageUrl = formData.get("old_image_url") as string;
-    const oldPath = oldImageUrl
-      ? oldImageUrl.split("/storage/v1/object/public/galleries/")[1]
-      : undefined;
-    const { errors, data } = await uploadFile(
-      "menu-items",
-      validateFields.data.image_url,
-      undefined,
-      oldPath,
-    );
-
-    if (errors) {
-      return {
-        status: "error",
-        errors: {
-          ...prevState.errors,
-          _form: [...errors._form],
-        },
-      };
-    }
-
-    validateFields = {
-      ...validateFields,
-      data: {
-        ...validateFields.data,
-        image_url: data.url,
-      },
-    };
-  }
-
   const supabase = await createClient();
 
+  const tableNumber = validateFields.data.table_number;
+
+  const orderingUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/table/${encodeURIComponent(tableNumber)}`;
+
   const { error } = await supabase
-    .from("menu_items")
+    .from("tables")
     .update({
-      name: validateFields.data.name,
-      description: validateFields.data.description,
-      price: validateFields.data.price,
-      image_url: validateFields.data.image_url,
-      category_id: validateFields.data.category_id,
-      is_available: validateFields.data.is_available,
+      table_number: validateFields.data.table_number,
+      area_zone: validateFields.data.area_zone,
+      capacity: validateFields.data.capacity,
+      is_active: validateFields.data.is_active,
+      // qr_code_url: orderingUrl,
     })
     .eq("id", formData.get("id"));
 

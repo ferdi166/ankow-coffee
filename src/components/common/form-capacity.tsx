@@ -1,6 +1,7 @@
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const CAPACITY_OPTIONS = ["2", "4", "6", "custom"];
 
@@ -11,14 +12,20 @@ export default function FormCapacity<T extends FieldValues>({
   form: UseFormReturn<T>;
   name: Path<T>;
 }) {
+  const initialValue = String(form.getValues(name) ?? "");
+  const [isCustomSelected, setIsCustomSelected] = useState(
+    Boolean(initialValue) &&
+      !CAPACITY_OPTIONS.slice(0, -1).includes(initialValue),
+  );
+
   return (
     <Controller
       control={form.control}
       name={name}
       render={({ field, fieldState }) => {
-        const isCustom =
-          field.value &&
-          !CAPACITY_OPTIONS.slice(0, -1).includes(String(field.value));
+        const isPresetValue = CAPACITY_OPTIONS.slice(0, -1).includes(
+          String(field.value),
+        );
 
         return (
           <Field data-invalid={fieldState.invalid}>
@@ -28,8 +35,8 @@ export default function FormCapacity<T extends FieldValues>({
               {CAPACITY_OPTIONS.map((option) => {
                 const isSelected =
                   option === "custom"
-                    ? isCustom
-                    : String(field.value) === option;
+                    ? isCustomSelected
+                    : !isCustomSelected && String(field.value) === option;
 
                 return (
                   <button
@@ -42,10 +49,17 @@ export default function FormCapacity<T extends FieldValues>({
                     }`}
                     onClick={() => {
                       if (option === "custom") {
-                        field.onChange("");
-                      } else {
-                        field.onChange(option);
+                        setIsCustomSelected(true);
+
+                        if (isPresetValue) {
+                          field.onChange("");
+                        }
+
+                        return;
                       }
+
+                      setIsCustomSelected(false);
+                      field.onChange(option);
                     }}>
                     {option === "custom" ? "Kustom" : `${option} Pax`}
                   </button>
@@ -53,7 +67,7 @@ export default function FormCapacity<T extends FieldValues>({
               })}
             </div>
 
-            {isCustom && (
+            {isCustomSelected && (
               <Input
                 type="number"
                 min={1}

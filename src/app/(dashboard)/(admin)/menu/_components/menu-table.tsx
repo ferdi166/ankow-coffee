@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pencil, Search, Trash2 } from "lucide-react";
 
 import PaginationDataTable from "@/components/common/pagination-data-table";
@@ -19,28 +19,35 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Menu } from "@/validations/menu-validation";
 import Image from "next/image";
-
-type MenuItem = {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  price: number;
-  imageUrl?: string;
-  isAvailable: boolean;
-};
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import DialogEditMenu from "./dialog-edit-menu";
+import DialogHapusMenu from "./dialog-hapus-menu";
 
 type MenuTableProps = {
   items: Menu[];
+  refetch: () => void;
 };
 
 const LIMIT = 5;
 
-export default function MenuTable({ items }: MenuTableProps) {
+export default function MenuTable({ items, refetch }: MenuTableProps) {
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
   const [onlyUnavailable, setOnlyUnavailable] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editMenuId, setEditMenuId] = useState<string | null>(null);
+  const [deleteMenuId, setDeleteMenuId] = useState<string | null>(null);
+
+  const handleEditSuccess = useCallback(() => {
+    setIsEditDialogOpen(false);
+    setEditMenuId(null);
+  }, []);
+
+  const handleDeleteSuccess = useCallback(() => {
+    setDeleteMenuId(null);
+  }, []);
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
@@ -78,7 +85,7 @@ export default function MenuTable({ items }: MenuTableProps) {
             <TabsTrigger value="Espresso Based">Espresso Based</TabsTrigger>
             <TabsTrigger value="Manual Brew">Manual Brew</TabsTrigger>
             <TabsTrigger value="Non-Coffee">Non-Coffee</TabsTrigger>
-            <TabsTrigger value="Pastry & Food">Pastry & Food</TabsTrigger>
+            <TabsTrigger value="Main Course">Main Course</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -176,13 +183,43 @@ export default function MenuTable({ items }: MenuTableProps) {
 
                 <TableCell>
                   <div className="flex justify-center gap-2">
-                    <Button variant="outline" size="icon">
-                      <Pencil />
-                    </Button>
+                    <Dialog
+                      open={editMenuId === item.id}
+                      onOpenChange={(open) => {
+                        setEditMenuId(open ? item.id : null);
+                      }}>
+                      <DialogTrigger
+                        render={
+                          <Button variant="outline" size="icon">
+                            <Pencil />
+                          </Button>
+                        }
+                      />
+                      <DialogEditMenu
+                        menu={item}
+                        refetch={refetch}
+                        onSuccess={handleEditSuccess}
+                      />
+                    </Dialog>
 
-                    <Button variant="destructive" size="icon">
-                      <Trash2 />
-                    </Button>
+                    <Dialog
+                      open={deleteMenuId === item.id}
+                      onOpenChange={(open) => {
+                        setDeleteMenuId(open ? item.id : null);
+                      }}>
+                      <DialogTrigger
+                        render={
+                          <Button variant="destructive" size="icon">
+                            <Trash2 />
+                          </Button>
+                        }
+                      />
+                      <DialogHapusMenu
+                        menu={item}
+                        refetch={refetch}
+                        onSuccess={handleDeleteSuccess}
+                      />
+                    </Dialog>
                   </div>
                 </TableCell>
               </TableRow>

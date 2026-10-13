@@ -40,18 +40,6 @@ export default function Menu() {
     setIsCreateDialogOpen(false);
   }, []);
 
-  const menuItems = (menu ?? []).map((item) => ({
-    id: item.id,
-    name: item.name,
-    description: item.description ?? "",
-    category: item.categories?.name ?? "Tanpa Kategori",
-    price: Number(item.price),
-    image_url: item.image_url ?? undefined,
-    is_available: item.is_available,
-  }));
-
-  console.log(menu);
-
   return (
     <div className="p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -71,7 +59,7 @@ export default function Menu() {
           <DialogTambahMenu refetch={refetch} onSuccess={handleCreateSuccess} />
         </Dialog>
       </div>
-      <MenuTable items={menu ?? []} />
+      <MenuTable items={menu ?? []} refetch={refetch} />
     </div>
   );
 }

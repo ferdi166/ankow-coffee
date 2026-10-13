@@ -67,7 +67,7 @@ export default function FormMenu<T extends FieldValues>({
         <div className="space-y-4 max-h-[50vh] p-2 overflow-y-auto">
           <FormInput
             form={form}
-            name={"title" as Path<T>}
+            name={"name" as Path<T>}
             label="Nama Menu"
             placeholder="Masukkan Nama Menu..."
           />
@@ -107,7 +107,7 @@ export default function FormMenu<T extends FieldValues>({
           />
           <FormSwitch
             form={form}
-            name={"is_active" as Path<T>}
+            name={"is_available" as Path<T>}
             label="Stok"
             description="Tersedia, bisa langsung dipesan pelanggan."
           />

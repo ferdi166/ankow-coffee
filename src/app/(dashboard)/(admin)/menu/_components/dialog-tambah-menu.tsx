@@ -7,6 +7,7 @@ import { createMenu } from "../action";
 import { toast } from "@/components/ui/toast";
 import FormMenu from "./form-menu";
 import { INITIAL_MENU, INITIAL_STATE_MENU } from "@/constants/menu-constant";
+import { MenuForm, MenuSchemaForm } from "@/validations/menu-validation";
 
 export default function DialogTambahMenu({
   refetch,
@@ -15,8 +16,8 @@ export default function DialogTambahMenu({
   refetch: () => void;
   onSuccess: () => void;
 }) {
-  const form = useForm<SpotForm>({
-    resolver: zodResolver(SpotSchemaForm),
+  const form = useForm<MenuForm>({
+    resolver: zodResolver(MenuSchemaForm),
     defaultValues: INITIAL_MENU,
   });
 
@@ -31,6 +32,8 @@ export default function DialogTambahMenu({
     Object.entries(data).forEach(([key, value]) => {
       if (value instanceof File) {
         formData.append(key, value);
+      } else if (key === "price") {
+        formData.append(key, String(Number(value)));
       } else {
         formData.append(key, String(value ?? ""));
       }
@@ -45,7 +48,7 @@ export default function DialogTambahMenu({
     if (createMenuState.status === "error") {
       toast.add({
         type: "error",
-        title: "Tambah Galeri Menu gagal",
+        title: "Tambah Menu gagal",
         description: createMenuState.errors?._form?.[0],
         priority: "high",
       });
@@ -54,7 +57,7 @@ export default function DialogTambahMenu({
     if (createMenuState.status === "success") {
       toast.add({
         type: "success",
-        title: "Tambah Galeri Menu berhasil",
+        title: "Tambah Menu berhasil",
         description: "Data Menu berhasil ditambahkan",
       });
       form.reset();

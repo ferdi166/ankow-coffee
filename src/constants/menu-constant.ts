@@ -3,7 +3,7 @@ export const INITIAL_MENU = {
   description: "",
   price: "",
   image_url: "",
-  is_available: "",
+  is_available: false,
   category_id: "",
 };
 

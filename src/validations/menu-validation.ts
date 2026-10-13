@@ -1,14 +1,14 @@
 import z from "zod";
 
 const CategorySchema = z.object({
-  category_id: z.string(),
+  id: z.string(),
   name: z.string(),
 });
 
 export const MenuSchemaForm = z.object({
   name: z.string().min(1, "Nama Menu wajib diisi"),
   description: z.string().min(1, "Deskripsi wajib diisi"),
-  price: z.number().min(1, "Harga wajib diisi"),
+  price: z.string().min(1, "Harga wajib diisi"),
   image_url: z.union([z.string(), z.instanceof(File)]),
   is_available: z.boolean(),
   category_id: z.string(),

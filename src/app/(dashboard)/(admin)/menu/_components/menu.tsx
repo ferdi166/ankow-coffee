@@ -8,18 +8,8 @@ import MenuTable from "./menu-table";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import type { Menu } from "@/validations/menu-validation";
-
-const menuItems = [
-  {
-    id: "1",
-    name: "Kopi Susu Ankow",
-    description: "Double shot espresso, fresh milk, gula aren murni",
-    category: "Espresso Based",
-    price: 18000,
-    imageUrl: "/images/kopi-susu.jpg",
-    isAvailable: true,
-  },
-];
+import DialogTambahMenu from "./dialog-tambah-menu";
+import { useCallback, useState } from "react";
 
 export default function Menu() {
   const supabase = createClient();
@@ -45,14 +35,19 @@ export default function Menu() {
     },
   });
 
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
+  const handleCreateSuccess = useCallback(() => {
+    setIsCreateDialogOpen(false);
+  }, []);
+
   const menuItems = (menu ?? []).map((item) => ({
     id: item.id,
     name: item.name,
     description: item.description ?? "",
     category: item.categories?.name ?? "Tanpa Kategori",
     price: Number(item.price),
-    imageUrl: item.image_url ?? undefined,
-    isAvailable: item.is_available,
+    image_url: item.image_url ?? undefined,
+    is_available: item.is_available,
   }));
 
   console.log(menu);
@@ -64,7 +59,7 @@ export default function Menu() {
           title="Manajemen Menu & Stok"
           description="Kelola katalog menu, harga, dan ketersediaan stok real-time."
         />
-        <Dialog>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger
             render={
               <Button>
@@ -73,9 +68,10 @@ export default function Menu() {
               </Button>
             }
           />
+          <DialogTambahMenu refetch={refetch} onSuccess={handleCreateSuccess} />
         </Dialog>
       </div>
-      <MenuTable items={menuItems} />
+      <MenuTable items={menu ?? []} />
     </div>
   );
 }

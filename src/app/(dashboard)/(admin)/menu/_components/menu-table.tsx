@@ -17,6 +17,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Menu } from "@/validations/menu-validation";
+import Image from "next/image";
 
 type MenuItem = {
   id: string;
@@ -29,7 +31,7 @@ type MenuItem = {
 };
 
 type MenuTableProps = {
-  items: MenuItem[];
+  items: Menu[];
 };
 
 const LIMIT = 5;
@@ -42,13 +44,14 @@ export default function MenuTable({ items }: MenuTableProps) {
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
-      const matchesCategory = category === "all" || item.category === category;
+      const matchesCategory =
+        category === "all" || item.categories.name === category;
 
       const matchesSearch = item.name
         .toLowerCase()
         .includes(search.toLowerCase());
 
-      const matchesAvailability = !onlyUnavailable || !item.isAvailable;
+      const matchesAvailability = !onlyUnavailable || !item.is_available;
 
       return matchesCategory && matchesSearch && matchesAvailability;
     });
@@ -80,7 +83,7 @@ export default function MenuTable({ items }: MenuTableProps) {
         </Tabs>
       </div>
 
-      <div className="flex flex-col justify-between gap-4 border-b pt-0 p-5 md:flex-row md:items-center">
+      <div className="flex flex-col justify-between gap-4 py-0 p-5 md:flex-row md:items-center">
         <div className="relative w-full md:w-80">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -125,10 +128,13 @@ export default function MenuTable({ items }: MenuTableProps) {
                 <TableCell className="px-6">
                   <div className="flex items-start gap-3.5">
                     <div className="size-14 shrink-0 overflow-hidden rounded-lg border bg-muted">
-                      {item.imageUrl && (
-                        <img
-                          src={item.imageUrl}
+                      {item.image_url && (
+                        <Image
+                          src={item.image_url}
                           alt={item.name}
+                          loading="eager"
+                          width={100}
+                          height={100}
                           className="size-full object-cover"
                         />
                       )}
@@ -137,7 +143,7 @@ export default function MenuTable({ items }: MenuTableProps) {
                     <div className="min-w-0">
                       <p className="font-bold">{item.name}</p>
                       <span className="mt-1 inline-flex rounded-full bg-muted px-2 py-0.5 text-xs">
-                        {item.category}
+                        {item.categories.name}
                       </span>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {item.description}
@@ -153,18 +159,18 @@ export default function MenuTable({ items }: MenuTableProps) {
                 <TableCell>
                   <span
                     className={
-                      item.isAvailable
+                      item.is_available
                         ? "inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-600"
                         : "inline-flex items-center gap-1.5 rounded-full border border-muted bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
                     }>
                     <span
                       className={
-                        item.isAvailable
+                        item.is_available
                           ? "size-1.5 rounded-full bg-emerald-500"
                           : "size-1.5 rounded-full bg-muted-foreground"
                       }
                     />
-                    {item.isAvailable ? "Tersedia" : "Stok Habis"}
+                    {item.is_available ? "Tersedia" : "Stok Habis"}
                   </span>
                 </TableCell>
 

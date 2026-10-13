@@ -5,9 +5,13 @@ import { Switch } from "@/components/ui/switch";
 export default function FormSwitch<T extends FieldValues>({
   form,
   name,
+  label,
+  description,
 }: {
   form: UseFormReturn<T>;
   name: Path<T>;
+  label: string;
+  description: string;
 }) {
   return (
     <Controller
@@ -19,10 +23,8 @@ export default function FormSwitch<T extends FieldValues>({
           data-invalid={fieldState.invalid}
           className="items-center justify-between border-t pt-4 pr-1">
           <div>
-            <FieldLabel>Tampilkan di Website</FieldLabel>
-            <FieldDescription>
-              Spot langsung terlihat publik pada galeri landing page
-            </FieldDescription>
+            <FieldLabel>{label}</FieldLabel>
+            <FieldDescription>{description}</FieldDescription>
           </div>
 
           <Switch

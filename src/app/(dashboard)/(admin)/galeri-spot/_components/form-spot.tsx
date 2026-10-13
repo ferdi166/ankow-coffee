@@ -87,7 +87,12 @@ export default function FormSpot<T extends FieldValues>({
             setPreview={setPreview}
           />
           <FormFacilities form={form} name={"features" as Path<T>} />
-          <FormSwitch form={form} name={"is_active" as Path<T>} />
+          <FormSwitch
+            form={form}
+            name={"is_active" as Path<T>}
+            label="Tampilkan di Website"
+            description="Spot langsung terlihat publik pada galeri landing page."
+          />
         </div>
         <DialogFooter>
           <DialogClose render={<Button variant="outline">Batal</Button>} />

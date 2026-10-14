@@ -111,7 +111,7 @@ export default function PesananTable({ items }: PesananTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30">
-              <TableHead>ID & Waktu</TableHead>
+              <TableHead className="text-center">ID & Waktu</TableHead>
               <TableHead>Tipe & Meja</TableHead>
               <TableHead>Rincian Item</TableHead>
               <TableHead>Status Dapur</TableHead>
@@ -124,7 +124,7 @@ export default function PesananTable({ items }: PesananTableProps) {
           <TableBody>
             {pageItems.map((order) => (
               <TableRow key={order.id}>
-                <TableCell>
+                <TableCell className="text-center">
                   <strong>#{order.order_number}</strong>
                   <div className="text-xs text-muted-foreground">
                     {new Date(order.created_at).toLocaleTimeString("id-ID", {
@@ -136,11 +136,11 @@ export default function PesananTable({ items }: PesananTableProps) {
                 </TableCell>
 
                 <TableCell>
-                  {order.order_type === "takeaway"
+                  {order.order_type === "Takeaway"
                     ? `Takeaway`
                     : (order.tables?.table_number ?? "-")}
                   <div className="text-xs text-muted-foreground">
-                    {order.order_type === "takeaway"
+                    {order.order_type === "Takeaway"
                       ? order.customer_name
                       : order.tables?.area_zone}
                   </div>
@@ -164,7 +164,32 @@ export default function PesananTable({ items }: PesananTableProps) {
                 </TableCell>
 
                 <TableCell>{order.order_status}</TableCell>
-                <TableCell>{order.payment_status}</TableCell>
+                <TableCell>
+                  <span
+                    className={
+                      order.payment_status === "paid"
+                        ? "inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700"
+                        : order.payment_status === "void"
+                          ? "inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-medium text-rose-700"
+                          : "inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700"
+                    }>
+                    <span
+                      className={
+                        order.payment_status === "paid"
+                          ? "size-1.5 rounded-full bg-emerald-500"
+                          : order.payment_status === "void"
+                            ? "size-1.5 rounded-full bg-rose-500"
+                            : "size-1.5 rounded-full bg-amber-500"
+                      }
+                    />
+
+                    {order.payment_status === "paid"
+                      ? `Lunas${order.payment_method ? ` (${order.payment_method})` : ""}`
+                      : order.payment_status === "void"
+                        ? "Void"
+                        : "Belum Bayar"}
+                  </span>
+                </TableCell>
 
                 <TableCell className="font-bold">
                   Rp {order.total_amount.toLocaleString("id-ID")}

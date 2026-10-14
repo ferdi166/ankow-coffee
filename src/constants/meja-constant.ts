@@ -2,7 +2,7 @@ export const INITIAL_TABLE = {
   table_number: "",
   area_zone: "",
   capacity: "",
-  is_active: false,
+  is_active: true,
 };
 
 export const INITIAL_STATE_TABLE = {

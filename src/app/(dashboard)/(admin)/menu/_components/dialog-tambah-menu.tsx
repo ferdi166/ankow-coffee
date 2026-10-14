@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { SpotForm, SpotSchemaForm } from "@/validations/spot-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { Preview } from "@/types/general";

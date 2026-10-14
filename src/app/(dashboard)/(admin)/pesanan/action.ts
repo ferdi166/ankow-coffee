@@ -3,16 +3,17 @@
 import { deleteFile, uploadFile } from "@/actions/storage-action";
 import { createClient } from "@/lib/supabase/server";
 import { MenuFormState } from "@/types/menu";
+import { OrdersFormState } from "@/types/orders";
 import { TableFormState } from "@/types/table";
 import { MenuSchemaForm } from "@/validations/menu-validation";
 import { TableSchemaForm } from "@/validations/table-validation";
 
 export async function createMeja(
-  prevState: TableFormState,
+  prevState: OrdersFormState,
   formData: FormData,
 ) {
   const validateFields = TableSchemaForm.safeParse({
-    table_number: formData.get("table_number"),
+    customer_name: formData.get("customer_name"),
     area_zone: formData.get("area_zone"),
     capacity: formData.get("capacity"),
     is_active: formData.get("is_active") === "true",
@@ -30,16 +31,13 @@ export async function createMeja(
 
   const supabase = await createClient();
 
-  const tableNumber = validateFields.data.table_number;
+  const orderNumber = `AKW-`;
 
-  const orderingUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/table/${encodeURIComponent(tableNumber)}`;
-
-  const { error } = await supabase.from("tables").insert({
+  const { error } = await supabase.from("orders").insert({
     table_number: validateFields.data.table_number,
     area_zone: validateFields.data.area_zone,
     capacity: validateFields.data.capacity,
     is_active: validateFields.data.is_active,
-    qr_code_url: orderingUrl,
   });
 
   if (error) {

@@ -1,7 +1,3 @@
-import FormImage from "@/components/common/form-image";
-import FormInput from "@/components/common/form-input";
-import FormSelect from "@/components/common/form-select";
-import FormSwitch from "@/components/common/form-switch";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -13,17 +9,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
-import { Preview } from "@/types/general";
 import { Menu } from "@/validations/menu-validation";
-import { OrdersWithItems } from "@/validations/orders-validation";
+import {
+  OrdersWithItems,
+  OrdersWithItemsForm,
+} from "@/validations/orders-validation";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, Loader2, Search } from "lucide-react";
-import {
-  FieldValues,
-  Path,
-  useFieldArray,
-  UseFormReturn,
-} from "react-hook-form";
+import { useFieldArray, UseFormReturn } from "react-hook-form";
 import MenuCard from "./menu-card";
 import OrderTypeSelector from "./order-type-selector";
 import CustomerField from "./customer-field";
@@ -31,23 +24,20 @@ import SelectedItems from "./selected-items";
 import OrderSummary from "./order-summary";
 import TableField from "./table-field";
 import { Table } from "@/validations/table-validation";
+import { useMemo, useState } from "react";
 
-export default function FormPesanan<T extends FieldValues>({
+export default function FormPesanan({
   form,
   pesanan,
   type,
-  preview,
-  setPreview,
   onSubmit,
   isLoading,
 }: {
-  form: UseFormReturn<T>;
+  form: UseFormReturn<OrdersWithItemsForm>;
   pesanan?: OrdersWithItems;
   onSubmit: (event: React.SubmitEvent<HTMLFormElement>) => void;
   isLoading: boolean;
   type: "Tambah" | "Edit";
-  preview?: Preview;
-  setPreview?: (preview: Preview) => void;
 }) {
   const supabase = createClient();
   const { data: categories } = useQuery({
@@ -100,7 +90,43 @@ export default function FormPesanan<T extends FieldValues>({
 
   const { fields, append, remove, update } = useFieldArray({
     control: form.control,
-    name: "items" as never,
+    name: "items",
+  });
+
+  const [search, setSearch] = useState<string>("");
+
+  const filteredMenu = useMemo(() => {
+    const keyword = search.toLowerCase().trim();
+
+    if (!keyword) {
+      return menu ?? [];
+    }
+
+    return (menu ?? []).filter((item) => {
+      return (
+        item.name.toLowerCase().includes(keyword) ||
+        item.description.toLowerCase().includes(keyword) ||
+        item.categories.name.toLowerCase().includes(keyword)
+      );
+    });
+  }, [menu, search]);
+
+  const summaryItems = fields.flatMap((field) => {
+    const selectedMenu = menu?.find((item) => item.id === field.menu_item_id);
+
+    if (!selectedMenu) {
+      return [];
+    }
+
+    return [
+      {
+        id: field.id,
+        name: selectedMenu.name,
+        price: selectedMenu.price,
+        quantity: field.quantity,
+        notes: field.notes ?? "",
+      },
+    ];
   });
 
   return (
@@ -125,6 +151,8 @@ export default function FormPesanan<T extends FieldValues>({
               <Input
                 className="pl-9"
                 placeholder="Cari menu kopi, non-kopi, atau pastry..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
 
@@ -141,7 +169,7 @@ export default function FormPesanan<T extends FieldValues>({
             </div>
 
             <div className="mt-3 grid grid-cols-2 gap-3">
-              {menu?.map((item) => (
+              {filteredMenu?.map((item) => (
                 <MenuCard
                   key={item.id}
                   item={item}
@@ -173,7 +201,7 @@ export default function FormPesanan<T extends FieldValues>({
           <section className="flex min-h-0 flex-col overflow-hidden p-5">
             <OrderTypeSelector form={form} />
             <div className="mt-3 grid shrink-0 gap-3 sm:grid-cols-2">
-              {form.watch("order_type" as Path<T>) === "Dine-In" && (
+              {form.watch("order_type") === "Dine-In" && (
                 <TableField form={form} tables={tables ?? []} />
               )}
 
@@ -214,7 +242,7 @@ export default function FormPesanan<T extends FieldValues>({
               onClear={() => remove(fields.map((_, index) => index))}
             />
 
-            <OrderSummary items={[]} />
+            <OrderSummary items={summaryItems} />
           </section>
         </div>
 

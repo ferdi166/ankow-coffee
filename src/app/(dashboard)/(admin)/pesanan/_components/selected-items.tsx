@@ -5,14 +5,14 @@ import { Menu } from "@/validations/menu-validation";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
+import type { FieldArrayWithId } from "react-hook-form";
+import type { OrdersWithItemsForm } from "@/validations/orders-validation";
+
+type OrderItemField = FieldArrayWithId<OrdersWithItemsForm, "items", "id">;
+
 type Props<T extends FieldValues> = {
   form: UseFormReturn<T>;
-  fields: {
-    id: string;
-    menu_item_id: string;
-    quantity: number;
-    notes?: string;
-  }[];
+  fields: OrderItemField[];
   menu: Menu[];
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;

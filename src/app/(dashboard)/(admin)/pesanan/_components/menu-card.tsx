@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Menu } from "@/validations/menu-validation";
+import Image from "next/image";
 
 type Props = {
   item: Menu;
@@ -11,9 +12,12 @@ export default function MenuCard({ item, onAdd }: Props) {
   return (
     <Card className="gap-0 overflow-hidden rounded-xl py-0 shadow-none">
       <CardContent className="flex gap-3 p-3">
-        <img
+        <Image
           src={item.image_url}
           alt={item.name}
+          width={100}
+          height={100}
+          loading="eager"
           className="size-16 shrink-0 rounded-lg object-cover"
         />
 

@@ -107,23 +107,11 @@ export async function editMeja(prevState: TableFormState, formData: FormData) {
   };
 }
 
-export async function hapusMenu(prevState: MenuFormState, formData: FormData) {
+export async function hapusMeja(prevState: TableFormState, formData: FormData) {
   const supabase = await createClient();
-  const image = formData.get("image_url") as string;
-  const { status, errors } = await deleteFile("menu-items", image);
-
-  if (status === "error") {
-    return {
-      status: "error",
-      errors: {
-        ...prevState.errors,
-        _form: [errors?._form?.[0] ?? "Unknown error"],
-      },
-    };
-  }
 
   const { error } = await supabase
-    .from("menu_items")
+    .from("tables")
     .delete()
     .eq("id", formData.get("id"));
 

@@ -34,7 +34,7 @@ export default function DialogHapusMenu({
     if (hapusMenuState.status === "error") {
       toast.add({
         type: "error",
-        title: "Tambah Menu gagal",
+        title: "Hapus Menu gagal",
         description: hapusMenuState.errors?._form?.[0],
         priority: "high",
       });

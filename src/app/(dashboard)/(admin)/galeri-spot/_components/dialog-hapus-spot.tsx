@@ -33,7 +33,7 @@ export default function DialogHapusSpot({
     if (hapusSpotState.status === "error") {
       toast.add({
         type: "error",
-        title: "Tambah Galeri Spot gagal",
+        title: "Hapus Galeri Spot gagal",
         description: hapusSpotState.errors?._form?.[0],
         priority: "high",
       });

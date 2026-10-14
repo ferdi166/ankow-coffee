@@ -16,6 +16,7 @@ import { toPng } from "html-to-image";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DialogEditMeja from "./dialog-edit-meja";
 import { useState, useCallback } from "react";
+import DialogHapusMeja from "./dialog-hapus-meja";
 
 type MejaCardProps = {
   item: Table;
@@ -23,11 +24,10 @@ type MejaCardProps = {
 };
 
 export default function MejaCard({ item, refetch }: MejaCardProps) {
-  const qrRef = useRef<HTMLDivElement>(null);
-
   const cardExportRef = useRef<HTMLDivElement>(null);
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isHapusDialogOpen, setIsHapusDialogOpen] = useState(false);
 
   const handleDownload = async () => {
     if (!cardExportRef.current) return;
@@ -46,6 +46,9 @@ export default function MejaCard({ item, refetch }: MejaCardProps) {
 
   const handleEditSuccess = useCallback(() => {
     setIsEditDialogOpen(false);
+  }, []);
+  const handleHapusSuccess = useCallback(() => {
+    setIsHapusDialogOpen(false);
   }, []);
 
   return (
@@ -128,13 +131,24 @@ export default function MejaCard({ item, refetch }: MejaCardProps) {
             />
           </Dialog>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-            aria-label="Hapus Meja">
-            <Trash2 className="size-3.5" />
-          </Button>
+          <Dialog open={isHapusDialogOpen} onOpenChange={setIsHapusDialogOpen}>
+            <DialogTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Hapus Meja">
+                  <Trash2 className="size-3.5" />
+                </Button>
+              }
+            />
+            <DialogHapusMeja
+              meja={item}
+              refetch={refetch}
+              onSuccess={handleHapusSuccess}
+            />
+          </Dialog>
         </div>
       </CardFooter>
     </Card>

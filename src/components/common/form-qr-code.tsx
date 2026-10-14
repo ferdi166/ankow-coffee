@@ -1,8 +1,7 @@
 "use client";
 
 import QRCode from "react-qr-code";
-import { Download, QrCode } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { QrCode } from "lucide-react";
 import { Table } from "@/validations/table-validation";
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_SITE_URL}/table`;
@@ -43,16 +42,6 @@ export default function FormQrCode({
           <p className="truncate text-xs text-muted-foreground">{tableUrl}</p>
         </div>
       </div>
-
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        disabled={!tableUrl}
-        onClick={() => window.open(tableUrl, "_blank")}>
-        <Download />
-        Cetak / Unduh QR
-      </Button>
     </div>
   );
 }

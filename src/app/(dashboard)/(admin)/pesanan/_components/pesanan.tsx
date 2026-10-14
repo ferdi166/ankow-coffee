@@ -8,6 +8,8 @@ import { OrdersWithItems } from "@/validations/orders-validation";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import PesananTable from "./pesanan-table";
+import DialogTambahPesanan from "./dialog-tambah-pesanan";
+import { useCallback, useState } from "react";
 
 export default function Pesanan() {
   const supabase = createClient();
@@ -58,6 +60,12 @@ export default function Pesanan() {
       return data;
     },
   });
+
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
+  const handleCreateSuccess = useCallback(() => {
+    setIsCreateDialogOpen(false);
+  }, []);
+
   return (
     <div className="p-8 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -73,6 +81,10 @@ export default function Pesanan() {
                 Buat Pesanan Baru
               </Button>
             }
+          />
+          <DialogTambahPesanan
+            refetch={refetch}
+            onSuccess={handleCreateSuccess}
           />
         </Dialog>
       </div>

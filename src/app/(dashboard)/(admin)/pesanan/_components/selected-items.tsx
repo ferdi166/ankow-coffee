@@ -1,97 +1,125 @@
+import FormInput from "@/components/common/form-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Menu } from "@/validations/menu-validation";
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-type SelectedItem = {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  notes: string;
-};
-
-type Props = {
-  items: SelectedItem[];
+type Props<T extends FieldValues> = {
+  form: UseFormReturn<T>;
+  fields: {
+    id: string;
+    menu_item_id: string;
+    quantity: number;
+    notes?: string;
+  }[];
+  menu: Menu[];
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
   onRemove: (id: string) => void;
-  onNotesChange: (id: string, notes: string) => void;
+  onClear: () => void;
 };
 
-export default function SelectedItems({
-  items,
+export default function SelectedItems<T extends FieldValues>({
+  form,
+  fields,
+  menu,
   onIncrease,
   onDecrease,
   onRemove,
-  onNotesChange,
-}: Props) {
+  onClear,
+}: Props<T>) {
   return (
-    <section className="mt-4">
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-xs font-bold">Item Terpilih ({items.length})</h3>
+    <section className="mt-4 flex min-h-0 flex-1 flex-col">
+      <div className="mb-2 flex shrink-0 items-center justify-between">
+        <h3 className="text-xs font-bold">Item Terpilih ({fields.length})</h3>
 
-        <Button type="button" variant="ghost" size="sm">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onClear}
+          disabled={fields.length === 0}>
           Hapus Semua
         </Button>
       </div>
 
-      <div className="space-y-2">
-        {items.map((item) => (
-          <div key={item.id} className="rounded-xl border p-2.5">
-            <div className="flex justify-between gap-3">
-              <div className="min-w-0">
-                <h4 className="truncate text-xs font-bold">{item.name}</h4>
-                <p className="text-[11px] text-muted-foreground">
-                  {item.quantity}x @Rp {item.price.toLocaleString("id-ID")}
-                </p>
-              </div>
+      <ScrollArea className="min-h-0 flex-1 pr-3">
+        <div className="space-y-2">
+          {fields.map((field, index) => {
+            const selectedMenu = menu.find(
+              (item) => item.id === field.menu_item_id,
+            );
 
-              <div className="text-right">
-                <p className="text-xs font-bold">
-                  Rp {(item.price * item.quantity).toLocaleString("id-ID")}
-                </p>
+            if (!selectedMenu) {
+              return null;
+            }
 
-                <div className="mt-1 flex items-center justify-end gap-1">
-                  <Button
-                    type="button"
-                    size="icon-xs"
-                    variant="secondary"
-                    onClick={() => onDecrease(item.id)}>
-                    <Minus />
-                  </Button>
+            return (
+              <div key={field.id} className="rounded-xl border p-2.5">
+                <div className="flex justify-between gap-3">
+                  <div className="min-w-0">
+                    <h4 className="truncate text-xs font-bold">
+                      {selectedMenu.name}
+                    </h4>
 
-                  <span className="w-5 text-center text-xs font-bold">
-                    {item.quantity}
-                  </span>
+                    <p className="text-[11px] text-muted-foreground">
+                      {field.quantity}x @Rp{" "}
+                      {selectedMenu.price.toLocaleString("id-ID")}
+                    </p>
+                  </div>
 
-                  <Button
-                    type="button"
-                    size="icon-xs"
-                    variant="secondary"
-                    onClick={() => onIncrease(item.id)}>
-                    <Plus />
-                  </Button>
+                  <div className="text-right">
+                    <p className="text-xs font-bold">
+                      Rp{" "}
+                      {(selectedMenu.price * field.quantity).toLocaleString(
+                        "id-ID",
+                      )}
+                    </p>
 
-                  <Button
-                    type="button"
-                    size="icon-xs"
-                    variant="ghost"
-                    onClick={() => onRemove(item.id)}>
-                    <Trash2 />
-                  </Button>
+                    <div className="mt-1 flex items-center justify-end gap-1">
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="secondary"
+                        onClick={() => onDecrease(field.id)}>
+                        <Minus />
+                      </Button>
+
+                      <span className="w-5 text-center text-xs font-bold">
+                        {field.quantity}
+                      </span>
+
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="secondary"
+                        onClick={() => onIncrease(field.id)}>
+                        <Plus />
+                      </Button>
+
+                      <Button
+                        type="button"
+                        size="icon-xs"
+                        variant="ghost"
+                        onClick={() => onRemove(field.id)}>
+                        <Trash2 />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <Input
-              value={item.notes}
-              onChange={(event) => onNotesChange(item.id, event.target.value)}
-              className="mt-2 h-8 text-xs"
-              placeholder="Catatan item..."
-            />
-          </div>
-        ))}
-      </div>
+                <FormInput
+                  form={form}
+                  name={`items.${index}.notes` as Path<T>}
+                  label=""
+                  placeholder="Catatan item..."
+                />
+              </div>
+            );
+          })}
+        </div>
+      </ScrollArea>
     </section>
   );
 }

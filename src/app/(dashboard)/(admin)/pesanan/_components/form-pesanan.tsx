@@ -18,7 +18,12 @@ import { Menu } from "@/validations/menu-validation";
 import { OrdersWithItems } from "@/validations/orders-validation";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, Loader2, Search } from "lucide-react";
-import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import {
+  FieldValues,
+  Path,
+  useFieldArray,
+  UseFormReturn,
+} from "react-hook-form";
 import MenuCard from "./menu-card";
 import OrderTypeSelector from "./order-type-selector";
 import CustomerField from "./customer-field";
@@ -93,8 +98,13 @@ export default function FormPesanan<T extends FieldValues>({
     },
   });
 
+  const { fields, append, remove, update } = useFieldArray({
+    control: form.control,
+    name: "items" as never,
+  });
+
   return (
-    <DialogContent className="sm:max-w-6xl max-h-[90vh]">
+    <DialogContent className="flex h-[90vh] max-h-[90vh] flex-col sm:max-w-6xl">
       <DialogHeader className="mx-2 mt-2">
         <DialogTitle className="font-semibold">
           {type === "Tambah"
@@ -107,9 +117,9 @@ export default function FormPesanan<T extends FieldValues>({
             : "Perbarui item, catatan, atau meja untuk pesanan ini."}
         </DialogDescription>
       </DialogHeader>
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div className="grid min-h-[450px] md:grid-cols-[1.35fr_1fr]">
-          <section className="overflow-y-auto border-r p-5">
+      <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
+        <div className="grid min-h-0 flex-1 md:grid-cols-[1.35fr_1fr]">
+          <section className="min-h-0 overflow-y-auto border-r p-5">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2" />
               <Input
@@ -132,24 +142,76 @@ export default function FormPesanan<T extends FieldValues>({
 
             <div className="mt-3 grid grid-cols-2 gap-3">
               {menu?.map((item) => (
-                <MenuCard key={item.id} item={item} onAdd={() => {}} />
+                <MenuCard
+                  key={item.id}
+                  item={item}
+                  onAdd={() => {
+                    const existingIndex = fields.findIndex(
+                      (field) => field.menu_item_id === item.id,
+                    );
+
+                    if (existingIndex !== -1) {
+                      update(existingIndex, {
+                        ...fields[existingIndex],
+                        quantity: fields[existingIndex].quantity + 1,
+                      });
+
+                      return;
+                    }
+
+                    append({
+                      menu_item_id: item.id,
+                      quantity: 1,
+                      notes: "",
+                    });
+                  }}
+                />
               ))}
             </div>
           </section>
 
-          <section className="overflow-y-auto p-5">
+          <section className="flex min-h-0 flex-col overflow-hidden p-5">
             <OrderTypeSelector form={form} />
-            {form.watch("order_type" as Path<T>) === "Dine-In" && (
-              <TableField form={form} tables={tables ?? []} />
-            )}
-            <CustomerField form={form} />
+            <div className="mt-3 grid shrink-0 gap-3 sm:grid-cols-2">
+              {form.watch("order_type" as Path<T>) === "Dine-In" && (
+                <TableField form={form} tables={tables ?? []} />
+              )}
+
+              <CustomerField form={form} />
+            </div>
 
             <SelectedItems
-              items={[]}
-              onIncrease={() => {}}
-              onDecrease={() => {}}
-              onRemove={() => {}}
-              onNotesChange={() => {}}
+              form={form}
+              fields={fields}
+              menu={menu ?? []}
+              onIncrease={(id) => {
+                const index = fields.findIndex((field) => field.id === id);
+
+                if (index !== -1) {
+                  update(index, {
+                    ...fields[index],
+                    quantity: fields[index].quantity + 1,
+                  });
+                }
+              }}
+              onDecrease={(id) => {
+                const index = fields.findIndex((field) => field.id === id);
+
+                if (index !== -1 && fields[index].quantity > 1) {
+                  update(index, {
+                    ...fields[index],
+                    quantity: fields[index].quantity - 1,
+                  });
+                }
+              }}
+              onRemove={(id) => {
+                const index = fields.findIndex((field) => field.id === id);
+
+                if (index !== -1) {
+                  remove(index);
+                }
+              }}
+              onClear={() => remove(fields.map((_, index) => index))}
             />
 
             <OrderSummary items={[]} />

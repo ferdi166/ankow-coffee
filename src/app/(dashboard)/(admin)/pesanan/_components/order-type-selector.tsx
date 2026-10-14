@@ -24,8 +24,8 @@ export default function OrderTypeSelector<T extends FieldValues>({
 
             <Button
               type="button"
-              variant={field.value === "Dine-In" ? "default" : "ghost"}
-              onClick={() => field.onChange("Dine-In")}>
+              variant={field.value === "Dine In" ? "default" : "ghost"}
+              onClick={() => field.onChange("Dine In")}>
               Dine-In (Meja)
             </Button>
           </div>

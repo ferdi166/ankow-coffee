@@ -58,7 +58,7 @@ export default function SelectedItems<T extends FieldValues>({
             return (
               <div key={field.id} className="rounded-xl border p-2.5">
                 <div className="flex justify-between gap-3">
-                  <div className="min-w-0">
+                  <div className="min-w-0 space-y-1">
                     <h4 className="truncate text-xs font-bold">
                       {selectedMenu.name}
                     </h4>

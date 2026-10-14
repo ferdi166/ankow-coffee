@@ -9,7 +9,7 @@ export const OrderItemFormSchema = z.object({
 export const OrdersWithItemsSchemaForm = z.object({
   customer_name: z.string().min(1, "Nama pelanggan wajib diisi"),
   table_id: z.string().uuid().nullable(),
-  order_type: z.string().min(1, "Tipe order wajib dipilih"),
+  order_type: z.enum(["Dine In", "Takeaway"]),
   items: z.array(OrderItemFormSchema).min(1, "Minimal pilih satu menu"),
 });
 

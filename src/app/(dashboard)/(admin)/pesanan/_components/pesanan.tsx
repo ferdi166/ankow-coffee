@@ -73,7 +73,7 @@ export default function Pesanan() {
           title="Pesanan"
           description="Pantau semua transaksi masuk, status pembayaran, dan progres dapur secara real-time."
         />
-        <Dialog>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger
             render={
               <Button>

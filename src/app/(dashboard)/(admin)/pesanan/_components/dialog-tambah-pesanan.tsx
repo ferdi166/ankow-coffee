@@ -1,14 +1,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect } from "react";
-import { createMeja } from "../action";
+import { createPesanan } from "../action";
 import { toast } from "@/components/ui/toast";
-import { INITIAL_STATE_TABLE } from "@/constants/meja-constant";
 import FormPesanan from "./form-pesanan";
 import {
   OrdersWithItemsForm,
   OrdersWithItemsSchemaForm,
 } from "@/validations/orders-validation";
+import {
+  INITIAL_ORDERS,
+  INITIAL_STATE_ORDERS,
+} from "@/constants/orders-constant";
 
 export default function DialogTambahPesanan({
   refetch,
@@ -19,42 +22,40 @@ export default function DialogTambahPesanan({
 }) {
   const form = useForm<OrdersWithItemsForm>({
     resolver: zodResolver(OrdersWithItemsSchemaForm),
-    defaultValues: {
-      customer_name: "",
-      order_type: "Takeaway",
-      table_id: null,
-      items: [],
-    },
+    defaultValues: INITIAL_ORDERS,
   });
 
-  const [createMejaState, createMejaAction, isPendingCreateMeja] =
-    useActionState(createMeja, INITIAL_STATE_TABLE);
+  const [createPesananState, createPesananAction, isPendingCreatePesanan] =
+    useActionState(createPesanan, INITIAL_STATE_ORDERS);
 
   const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, String(value ?? ""));
-    });
+
+    formData.append("customer_name", data.customer_name);
+    formData.append("order_type", data.order_type);
+    formData.append("table_id", data.table_id ?? "");
+    formData.append("items", JSON.stringify(data.items));
+
     startTransition(() => {
-      createMejaAction(formData);
+      createPesananAction(formData);
     });
   });
 
   useEffect(() => {
-    if (createMejaState.status === "error") {
+    if (createPesananState.status === "error") {
       toast.add({
         type: "error",
-        title: "Tambah Meja gagal",
-        description: createMejaState.errors?._form?.[0],
+        title: "Tambah Pesanan gagal",
+        description: createPesananState.errors?._form?.[0],
         priority: "high",
       });
     }
 
-    if (createMejaState.status === "success") {
+    if (createPesananState.status === "success") {
       toast.add({
         type: "success",
-        title: "Tambah Meja berhasil",
-        description: "Data Meja berhasil ditambahkan",
+        title: "Tambah Pesanan berhasil",
+        description: "Data Pesanan berhasil ditambahkan",
       });
       form.reset();
 
@@ -62,8 +63,8 @@ export default function DialogTambahPesanan({
       refetch();
     }
   }, [
-    createMejaState.errors,
-    createMejaState.status,
+    createPesananState.errors,
+    createPesananState.status,
     form,
     onSuccess,
     refetch,
@@ -74,7 +75,7 @@ export default function DialogTambahPesanan({
       <FormPesanan
         type="Tambah"
         form={form}
-        isLoading={isPendingCreateMeja}
+        isLoading={isPendingCreatePesanan}
         onSubmit={onSubmit}
       />
     </>

@@ -201,7 +201,7 @@ export default function FormPesanan({
           <section className="flex min-h-0 flex-col overflow-hidden p-5">
             <OrderTypeSelector form={form} />
             <div className="mt-3 grid shrink-0 gap-3 sm:grid-cols-2">
-              {form.watch("order_type") === "Dine-In" && (
+              {form.watch("order_type") === "Dine In" && (
                 <TableField form={form} tables={tables ?? []} />
               )}
 

@@ -111,7 +111,7 @@ export default function PesananTable({ items }: PesananTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30">
-              <TableHead className="text-center">ID & Waktu</TableHead>
+              <TableHead className="text-start">ID & Waktu</TableHead>
               <TableHead>Tipe & Meja</TableHead>
               <TableHead>Rincian Item</TableHead>
               <TableHead>Status Dapur</TableHead>
@@ -124,7 +124,7 @@ export default function PesananTable({ items }: PesananTableProps) {
           <TableBody>
             {pageItems.map((order) => (
               <TableRow key={order.id}>
-                <TableCell className="text-center">
+                <TableCell className="text-start">
                   <strong>#{order.order_number}</strong>
                   <div className="text-xs text-muted-foreground">
                     {new Date(order.created_at).toLocaleTimeString("id-ID", {

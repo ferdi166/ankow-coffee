@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { OrdersWithItems } from "@/validations/orders-validation";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import PesananTable from "./pesanan-table";
 
 export default function Pesanan() {
   const supabase = createClient();
@@ -75,6 +76,8 @@ export default function Pesanan() {
           />
         </Dialog>
       </div>
+
+      <PesananTable items={orders ?? []} />
     </div>
   );
 }

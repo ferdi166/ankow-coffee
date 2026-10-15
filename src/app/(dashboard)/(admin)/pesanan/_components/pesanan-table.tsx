@@ -19,6 +19,7 @@ import { OrdersWithItems } from "@/validations/orders-validation";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DialogEditPesanan from "./dialog-edit-pesanan";
+import DialogDetailPesanan from "./dialog-detail-pesanan";
 
 type PesananTableProps = {
   items: OrdersWithItems[];
@@ -43,6 +44,8 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<OrdersWithItems | null>(
     null,
   );
+  const [selectedDetailOrder, setSelectedDetailOrder] =
+    useState<OrdersWithItems | null>(null);
 
   const filteredItems = useMemo(() => {
     return items.filter((order) => {
@@ -208,13 +211,30 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
 
                 <TableCell className="text-center">
                   {/* Tombol lihat, edit, dan cetak */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground"
-                    aria-label="Detail Pesanan">
-                    <Eye />
-                  </Button>
+                  <Dialog
+                    open={selectedDetailOrder !== null}
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        setSelectedDetailOrder(null);
+                      }
+                    }}>
+                    <DialogTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground"
+                          onClick={() => setSelectedDetailOrder(order)}
+                          aria-label="Detail Pesanan">
+                          <Eye />
+                        </Button>
+                      }
+                    />
+                    {selectedDetailOrder && (
+                      <DialogDetailPesanan pesanan={selectedDetailOrder} />
+                    )}
+                  </Dialog>
+
                   <Dialog
                     open={selectedOrder !== null}
                     onOpenChange={(open) => {

@@ -37,10 +37,7 @@ export default function DialogDetailPesanan({ pesanan }: Props) {
           Detail Pesanan - #{pesanan.order_number}
         </DialogTitle>
 
-        <DialogDescription
-          render={
-            <div className="flex items-center gap-2 text-sm text-muted-foreground" />
-          }>
+        <DialogDescription render={<div className="flex items-center gap-2" />}>
           <div>
             {new Date(pesanan.created_at).toLocaleDateString("id-ID", {
               day: "2-digit",

@@ -94,7 +94,7 @@ export default function DialogDetailPesanan({ pesanan }: Props) {
             {pesanan.order_items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start justify-between gap-4 p-3">
+                className="flex items-center justify-between gap-4 p-3">
                 <div className="min-w-0">
                   <p className="text-sm font-bold">
                     {item.quantity}x {item.menu_items.name}
@@ -117,13 +117,15 @@ export default function DialogDetailPesanan({ pesanan }: Props) {
 
         <OrderSummary items={items} />
       </div>
-      <DialogFooter className="mx-0 mb-0">
-        <DialogClose render={<Button variant="outline">Batal</Button>} />
+      {pesanan.payment_status === "unpaid" && (
+        <DialogFooter className="mx-0 mb-0">
+          <DialogClose render={<Button variant="outline">Batal</Button>} />
 
-        <Button type="button" className="shrink-0">
-          Proses Pembayaran
-        </Button>
-      </DialogFooter>
+          <Button type="button" className="shrink-0">
+            Proses Pembayaran
+          </Button>
+        </DialogFooter>
+      )}
     </DialogContent>
   );
 }

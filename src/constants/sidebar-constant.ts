@@ -36,7 +36,7 @@ export const SIDEBAR_MENU_LIST = {
       icon: QrCode,
     },
     {
-      title: "Pesanan & KDS",
+      title: "Pesanan",
       url: "/pesanan",
       icon: ClipboardList,
     },

@@ -22,6 +22,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { USER_ROLES } from "@/constants/user-roles";
+import { signOut } from "@/actions/auth-action";
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -95,6 +96,7 @@ export default function AppSidebar() {
         <SidebarMenu className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:items-center">
           <SidebarMenuItem>
             <SidebarMenuButton
+              onClick={signOut}
               size="lg"
               className="w-full flex items-center gap-3 p-2 h-12">
               <Avatar className="h-10 w-10 rounded-lg">

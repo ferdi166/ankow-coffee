@@ -250,7 +250,8 @@ export async function editPesanan(
       total_amount: totalAmount,
     })
     .eq("id", orderId)
-    .select("id");
+    .select("id")
+    .maybeSingle();
 
   if (orderError || !order) {
     return {

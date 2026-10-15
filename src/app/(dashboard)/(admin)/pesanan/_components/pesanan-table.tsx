@@ -40,6 +40,9 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState<OrdersWithItems | null>(
+    null,
+  );
 
   const filteredItems = useMemo(() => {
     return items.filter((order) => {
@@ -213,24 +216,34 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
                     <Eye />
                   </Button>
                   <Dialog
-                    open={isEditDialogOpen}
-                    onOpenChange={setIsEditDialogOpen}>
+                    open={selectedOrder !== null}
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        setSelectedOrder(null);
+                      }
+                    }}>
                     <DialogTrigger
                       render={
                         <Button
                           variant="ghost"
                           size="icon"
                           className="text-muted-foreground"
-                          aria-label="Edit Pesanan">
+                          aria-label="Edit Pesanan"
+                          onClick={() => setSelectedOrder(order)}>
                           <Edit />
                         </Button>
                       }
                     />
-                    <DialogEditPesanan
-                      pesanan={order}
-                      onSuccess={handleEditSuccess}
-                      refetch={refetch}
-                    />
+                    {selectedOrder && (
+                      <DialogEditPesanan
+                        pesanan={selectedOrder}
+                        onSuccess={() => {
+                          setSelectedOrder(null);
+                          refetch();
+                        }}
+                        refetch={refetch}
+                      />
+                    )}
                   </Dialog>
                 </TableCell>
               </TableRow>

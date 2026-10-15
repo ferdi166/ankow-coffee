@@ -9,7 +9,10 @@ import {
   OrdersWithItemsForm,
   OrdersWithItemsSchemaForm,
 } from "@/validations/orders-validation";
-import { INITIAL_STATE_ORDERS } from "@/constants/orders-constant";
+import {
+  INITIAL_ORDERS,
+  INITIAL_STATE_ORDERS,
+} from "@/constants/orders-constant";
 
 export default function DialogEditPesanan({
   pesanan,
@@ -22,7 +25,11 @@ export default function DialogEditPesanan({
 }) {
   const form = useForm<OrdersWithItemsForm>({
     resolver: zodResolver(OrdersWithItemsSchemaForm),
-    defaultValues: {
+    defaultValues: INITIAL_ORDERS,
+  });
+
+  useEffect(() => {
+    form.reset({
       customer_name: pesanan.customer_name,
       order_type: pesanan.order_type as "Dine In" | "Takeaway",
       table_id: pesanan.table_id || null,
@@ -31,8 +38,8 @@ export default function DialogEditPesanan({
         quantity: item.quantity,
         notes: item.notes ?? undefined,
       })),
-    },
-  });
+    });
+  }, [pesanan, form]);
 
   const [editPesananState, editPesananAction, isPendingEditPesanan] =
     useActionState(editPesanan, INITIAL_STATE_ORDERS);
@@ -49,7 +56,6 @@ export default function DialogEditPesanan({
     formData.append("table_id", data.table_id ?? "");
     formData.append("items", JSON.stringify(data.items));
     formData.append("id", pesanan.id);
-
     startTransition(() => {
       editPesananAction(formData);
     });
@@ -91,6 +97,7 @@ export default function DialogEditPesanan({
     <>
       <FormPesanan
         type="Edit"
+        pesanan={pesanan}
         form={form}
         isLoading={isPendingEditPesanan}
         onSubmit={onSubmit}

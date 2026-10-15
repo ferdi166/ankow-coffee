@@ -135,7 +135,7 @@ export default function FormPesanan({
         <DialogTitle className="font-semibold">
           {type === "Tambah"
             ? "Buat Pesanan Baru"
-            : `Edit Menu - ${pesanan?.order_number}`}
+            : `Edit Pesanan - ${pesanan?.order_number}`}
         </DialogTitle>
         <DialogDescription>
           {type === "Tambah"

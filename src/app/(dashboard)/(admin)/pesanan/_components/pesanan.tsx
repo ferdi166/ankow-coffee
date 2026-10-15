@@ -89,7 +89,7 @@ export default function Pesanan() {
         </Dialog>
       </div>
 
-      <PesananTable items={orders ?? []} />
+      <PesananTable items={orders ?? []} refetch={refetch} />
     </div>
   );
 }

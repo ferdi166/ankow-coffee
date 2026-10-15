@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Edit, Eye, Pencil, Search } from "lucide-react";
 
 import PaginationDataTable from "@/components/common/pagination-data-table";
@@ -17,9 +17,12 @@ import {
 } from "@/components/ui/table";
 import { OrdersWithItems } from "@/validations/orders-validation";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import DialogEditPesanan from "./dialog-edit-pesanan";
 
 type PesananTableProps = {
   items: OrdersWithItems[];
+  refetch: () => void;
 };
 
 const LIMIT = 5;
@@ -33,7 +36,7 @@ const statusTabs = [
   { value: "cancelled", label: "Dibatalkan" },
 ];
 
-export default function PesananTable({ items }: PesananTableProps) {
+export default function PesananTable({ items, refetch }: PesananTableProps) {
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,6 +70,11 @@ export default function PesananTable({ items }: PesananTableProps) {
     (currentPage - 1) * LIMIT,
     currentPage * LIMIT,
   );
+
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const handleEditSuccess = useCallback(() => {
+    setIsEditDialogOpen(false);
+  }, []);
 
   return (
     <Card className="overflow-hidden p-0">
@@ -204,13 +212,26 @@ export default function PesananTable({ items }: PesananTableProps) {
                     aria-label="Detail Pesanan">
                     <Eye />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground"
-                    aria-label="Edit Pesanan">
-                    <Edit />
-                  </Button>
+                  <Dialog
+                    open={isEditDialogOpen}
+                    onOpenChange={setIsEditDialogOpen}>
+                    <DialogTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-muted-foreground"
+                          aria-label="Edit Pesanan">
+                          <Edit />
+                        </Button>
+                      }
+                    />
+                    <DialogEditPesanan
+                      pesanan={order}
+                      onSuccess={handleEditSuccess}
+                      refetch={refetch}
+                    />
+                  </Dialog>
                 </TableCell>
               </TableRow>
             ))}

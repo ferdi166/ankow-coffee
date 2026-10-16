@@ -19,12 +19,12 @@ import {
 } from "@/validations/orders-validation";
 import { INITIAL_STATE_PAYMENT } from "@/constants/orders-constant";
 import { Check } from "lucide-react";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, useEffect } from "react";
 import { pembayaran } from "../action";
 
 type Props = {
   pesanan: OrdersWithItems;
-  onSubmitPayment: (data: PaymentForm) => void;
+  onSuccess: () => void;
   isLoading?: boolean;
 };
 
@@ -32,7 +32,7 @@ const formatRupiah = (value: number) => `Rp ${value.toLocaleString("id-ID")}`;
 
 export default function DialogPembayaran({
   pesanan,
-  onSubmitPayment,
+  onSuccess,
   isLoading = false,
 }: Props) {
   const form = useForm<PaymentForm>({
@@ -62,15 +62,26 @@ export default function DialogPembayaran({
 
     const formData = new FormData();
 
-    formData.append("received_amount", data.received_amount);
+    formData.append("received_amount", String(data.received_amount));
     formData.append("id", pesanan.id);
 
     startTransition(() => {
       pembayaranAction(formData);
     });
-
-    onSubmitPayment(data);
   });
+
+  useEffect(() => {
+    if (pembayaranState.status === "success") {
+      onSuccess();
+    }
+
+    if (pembayaranState.status === "error") {
+      form.setError("received_amount", {
+        type: "server",
+        message: pembayaranState.errors?._form?.[0],
+      });
+    }
+  }, [pembayaranState, form, onSuccess]);
 
   return (
     <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-[520px]">

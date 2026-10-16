@@ -338,7 +338,16 @@ export async function pembayaran(
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .select("id, total_amount, payment_status")
-    .eq("id", orderId);
+    .eq("id", orderId)
+    .single()
+    .overrideTypes<
+      {
+        id: string;
+        total_amount: number;
+        payment_status: string;
+      },
+      { merge: false }
+    >();
 
   if (orderError || !order) {
     return {

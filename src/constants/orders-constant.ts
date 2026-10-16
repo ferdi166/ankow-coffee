@@ -22,7 +22,7 @@ export const INITIAL_STATE_ORDERS = {
 };
 
 export const INITIAL_PAYMENT = {
-  received_amount: 0,
+  received_amount: "",
 } satisfies PaymentForm;
 
 export const INITIAL_STATE_PAYMENT = {

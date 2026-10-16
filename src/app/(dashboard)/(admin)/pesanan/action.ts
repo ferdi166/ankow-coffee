@@ -370,7 +370,7 @@ export async function pembayaran(
   }
 
   const totalAmount = Number(order.total_amount);
-  const receivedAmount = validateFields.data.received_amount;
+  const receivedAmount = Number(validateFields.data.received_amount);
 
   if (receivedAmount < totalAmount) {
     return {

@@ -17,7 +17,10 @@ import {
   PaymentForm,
   PaymentSchemaForm,
 } from "@/validations/orders-validation";
-import { INITIAL_STATE_PAYMENT } from "@/constants/orders-constant";
+import {
+  INITIAL_PAYMENT,
+  INITIAL_STATE_PAYMENT,
+} from "@/constants/orders-constant";
 import { Check } from "lucide-react";
 import { startTransition, useActionState, useEffect } from "react";
 import { pembayaran } from "../action";
@@ -30,36 +33,21 @@ type Props = {
 
 const formatRupiah = (value: number) => `Rp ${value.toLocaleString("id-ID")}`;
 
-export default function DialogPembayaran({
-  pesanan,
-  onSuccess,
-  isLoading = false,
-}: Props) {
+export default function DialogPembayaran({ pesanan, onSuccess }: Props) {
   const form = useForm<PaymentForm>({
     resolver: zodResolver(PaymentSchemaForm),
-    defaultValues: {
-      received_amount: pesanan.total_amount,
-    },
+    defaultValues: INITIAL_PAYMENT,
   });
 
   const [pembayaranState, pembayaranAction, isPendingPembayaran] =
     useActionState(pembayaran, INITIAL_STATE_PAYMENT);
 
-  const receivedAmount = form.watch("received_amount") || 0;
+  const receivedAmount = Number(form.watch("received_amount") || 0);
   const totalAmount = pesanan.total_amount;
   const change = Math.max(receivedAmount - totalAmount, 0);
   const isEnough = receivedAmount >= totalAmount;
 
   const onSubmit = form.handleSubmit((data) => {
-    if (data.received_amount < totalAmount) {
-      form.setError("received_amount", {
-        type: "validate",
-        message: "Uang yang diterima kurang dari total tagihan",
-      });
-
-      return;
-    }
-
     const formData = new FormData();
 
     formData.append("received_amount", String(data.received_amount));
@@ -121,7 +109,7 @@ export default function DialogPembayaran({
             name="received_amount"
             label="Uang Diterima"
             type="number"
-            placeholder="Masukkan nominal uang"
+            placeholder="Masukkan nominal uang..."
           />
 
           <div className="flex flex-wrap gap-2">
@@ -132,7 +120,7 @@ export default function DialogPembayaran({
                 variant={receivedAmount === amount ? "default" : "outline"}
                 size="sm"
                 onClick={() =>
-                  form.setValue("received_amount", amount, {
+                  form.setValue("received_amount", String(amount), {
                     shouldValidate: true,
                   })
                 }>
@@ -165,9 +153,9 @@ export default function DialogPembayaran({
         <DialogFooter className="mx-0 mb-0">
           <DialogClose render={<Button variant="outline">Batal</Button>} />
 
-          <Button type="submit" disabled={!isEnough || isLoading}>
+          <Button type="submit" disabled={!isEnough || isPendingPembayaran}>
             <Check />
-            {isLoading ? "Memproses..." : "Konfirmasi & Pelunasan"}
+            {isPendingPembayaran ? "Memproses..." : "Konfirmasi & Pelunasan"}
           </Button>
         </DialogFooter>
       </form>

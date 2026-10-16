@@ -55,10 +55,7 @@ export const OrdersWithItemsSchema = z.object({
 export type OrdersWithItems = z.infer<typeof OrdersWithItemsSchema>;
 
 export const PaymentSchemaForm = z.object({
-  received_amount: z.coerce
-    .number()
-    .int("Nominal harus berupa angka bulat")
-    .min(1, "Nominal pembayaran wajib diisi"),
+  received_amount: z.string().min(1, "Nominal pembayaran wajib diisi"),
 });
 
 export type PaymentForm = z.infer<typeof PaymentSchemaForm>;

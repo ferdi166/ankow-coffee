@@ -21,6 +21,8 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DialogEditPesanan from "./dialog-edit-pesanan";
 import DialogDetailPesanan from "./dialog-detail-pesanan";
 import DialogPembayaran from "./dialog-pembayaran";
+import { PaymentSuccessData } from "@/types/orders";
+import DialogPembayaranSuccess from "./dialog-pembayaran-success";
 
 type PesananTableProps = {
   items: OrdersWithItems[];
@@ -49,6 +51,10 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
     useState<OrdersWithItems | null>(null);
   const [selectedPaymentOrder, setSelectedPaymentOrder] =
     useState<OrdersWithItems | null>(null);
+  const [paymentSuccess, setPaymentSuccess] = useState<{
+    pesanan: OrdersWithItems;
+    payment: PaymentSuccessData;
+  } | null>(null);
 
   const filteredItems = useMemo(() => {
     return items.filter((order) => {
@@ -79,11 +85,6 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
     (currentPage - 1) * LIMIT,
     currentPage * LIMIT,
   );
-
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const handleEditSuccess = useCallback(() => {
-    setIsEditDialogOpen(false);
-  }, []);
 
   return (
     <Card className="overflow-hidden p-0">
@@ -254,10 +255,36 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
                     {selectedPaymentOrder && (
                       <DialogPembayaran
                         pesanan={selectedPaymentOrder}
-                        onSuccess={() => {
+                        onSuccess={(payment) => {
+                          setPaymentSuccess({
+                            pesanan: {
+                              ...selectedPaymentOrder,
+                              received_amount: payment.received_amount,
+                              change_amount: payment.change_amount,
+                              payment_status: "paid",
+                              payment_method: payment.payment_method,
+                            },
+                            payment,
+                          });
+
                           setSelectedPaymentOrder(null);
                           refetch();
                         }}
+                      />
+                    )}
+                  </Dialog>
+
+                  <Dialog
+                    open={paymentSuccess !== null}
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        setPaymentSuccess(null);
+                      }
+                    }}>
+                    {paymentSuccess && (
+                      <DialogPembayaranSuccess
+                        pesanan={paymentSuccess.pesanan}
+                        payment={paymentSuccess.payment}
                       />
                     )}
                   </Dialog>

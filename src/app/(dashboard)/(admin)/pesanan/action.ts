@@ -2,7 +2,6 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { OrdersFormState, PaymentFormState } from "@/types/orders";
-import { TableFormState } from "@/types/table";
 import {
   OrderItemForm,
   OrdersWithItemsSchemaForm,
@@ -91,10 +90,10 @@ export async function createPesanan(
     };
   });
 
-  const totalAmount = orderItems.reduce(
-    (total, item) => total + item.subtotal,
-    0,
-  );
+  const subtotal = orderItems.reduce((total, item) => total + item.subtotal, 0);
+
+  const tax = Math.round(subtotal * 0.1);
+  const totalAmount = subtotal + tax;
 
   const orderNumber = `AKW-${Date.now()}`;
 
@@ -225,10 +224,10 @@ export async function editPesanan(
     };
   });
 
-  const totalAmount = orderItems.reduce(
-    (total, item) => total + item.subtotal,
-    0,
-  );
+  const subtotal = orderItems.reduce((total, item) => total + item.subtotal, 0);
+
+  const tax = Math.round(subtotal * 0.1);
+  const totalAmount = subtotal + tax;
 
   const orderId = formData.get("id");
 
@@ -407,5 +406,10 @@ export async function pembayaran(
 
   return {
     status: "success",
+    data: {
+      received_amount: receivedAmount,
+      change_amount: changeAmount,
+      payment_method: "cash",
+    },
   };
 }

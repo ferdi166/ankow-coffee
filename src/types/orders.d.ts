@@ -1,3 +1,5 @@
+import { OrdersWithItems } from "@/validations/orders-validation";
+
 export type OrdersFormState = {
   status?: string;
   errors?: {
@@ -9,8 +11,14 @@ export type OrdersFormState = {
   };
 };
 
+export type PaymentSuccessData = Pick<
+  OrdersWithItems,
+  "received_amount" | "change_amount" | "payment_method"
+>;
+
 export type PaymentFormState = {
   status?: string;
+  data?: PaymentSuccessData;
   errors?: {
     received_amount?: string[];
     _form?: string[];

@@ -24,10 +24,11 @@ import {
 import { Check } from "lucide-react";
 import { startTransition, useActionState, useEffect } from "react";
 import { pembayaran } from "../action";
+import { PaymentSuccessData } from "@/types/orders";
 
 type Props = {
   pesanan: OrdersWithItems;
-  onSuccess: () => void;
+  onSuccess: (payment: PaymentSuccessData) => void;
   isLoading?: boolean;
 };
 
@@ -59,8 +60,8 @@ export default function DialogPembayaran({ pesanan, onSuccess }: Props) {
   });
 
   useEffect(() => {
-    if (pembayaranState.status === "success") {
-      onSuccess();
+    if (pembayaranState.status === "success" && pembayaranState.data) {
+      onSuccess(pembayaranState.data);
     }
 
     if (pembayaranState.status === "error") {

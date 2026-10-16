@@ -25,11 +25,7 @@ export default function DialogEditPesanan({
 }) {
   const form = useForm<OrdersWithItemsForm>({
     resolver: zodResolver(OrdersWithItemsSchemaForm),
-    defaultValues: INITIAL_ORDERS,
-  });
-
-  useEffect(() => {
-    form.reset({
+    defaultValues: {
       customer_name: pesanan.customer_name,
       order_type: pesanan.order_type as "Dine In" | "Takeaway",
       table_id: pesanan.table_id || null,
@@ -38,8 +34,8 @@ export default function DialogEditPesanan({
         quantity: item.quantity,
         notes: item.notes ?? undefined,
       })),
-    });
-  }, [pesanan, form]);
+    },
+  });
 
   const [editPesananState, editPesananAction, isPendingEditPesanan] =
     useActionState(editPesanan, INITIAL_STATE_ORDERS);

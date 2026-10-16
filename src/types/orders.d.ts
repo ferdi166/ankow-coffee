@@ -8,3 +8,11 @@ export type OrdersFormState = {
     _form?: string[];
   };
 };
+
+export type PaymentFormState = {
+  status?: string;
+  errors?: {
+    received_amount?: string[];
+    _form?: string[];
+  };
+};

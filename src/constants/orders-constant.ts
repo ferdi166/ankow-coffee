@@ -1,4 +1,7 @@
-import { OrdersWithItemsForm } from "@/validations/orders-validation";
+import {
+  OrdersWithItemsForm,
+  PaymentForm,
+} from "@/validations/orders-validation";
 
 export const INITIAL_ORDERS: OrdersWithItemsForm = {
   customer_name: "",
@@ -14,6 +17,18 @@ export const INITIAL_STATE_ORDERS = {
     order_type: [],
     table_id: [],
     items: [],
+    _form: [],
+  },
+};
+
+export const INITIAL_PAYMENT = {
+  received_amount: 0,
+} satisfies PaymentForm;
+
+export const INITIAL_STATE_PAYMENT = {
+  status: "idle",
+  errors: {
+    received_amount: [],
     _form: [],
   },
 };

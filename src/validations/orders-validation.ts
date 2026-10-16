@@ -41,6 +41,8 @@ export const OrdersWithItemsSchema = z.object({
   customer_name: z.string(),
   order_type: z.string(),
   total_amount: z.number(),
+  received_amount: z.number(),
+  change_amount: z.number(),
   order_status: z.string(),
   payment_status: z.string(),
   payment_method: z.string().nullable(),
@@ -51,3 +53,12 @@ export const OrdersWithItemsSchema = z.object({
 });
 
 export type OrdersWithItems = z.infer<typeof OrdersWithItemsSchema>;
+
+export const PaymentSchemaForm = z.object({
+  received_amount: z.coerce
+    .number()
+    .int("Nominal harus berupa angka bulat")
+    .min(1, "Nominal pembayaran wajib diisi"),
+});
+
+export type PaymentForm = z.infer<typeof PaymentSchemaForm>;

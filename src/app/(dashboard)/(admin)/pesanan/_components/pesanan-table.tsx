@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import DialogEditPesanan from "./dialog-edit-pesanan";
 import DialogDetailPesanan from "./dialog-detail-pesanan";
+import DialogPembayaran from "./dialog-pembayaran";
 
 type PesananTableProps = {
   items: OrdersWithItems[];
@@ -45,6 +46,8 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
     null,
   );
   const [selectedDetailOrder, setSelectedDetailOrder] =
+    useState<OrdersWithItems | null>(null);
+  const [selectedPaymentOrder, setSelectedPaymentOrder] =
     useState<OrdersWithItems | null>(null);
 
   const filteredItems = useMemo(() => {
@@ -231,7 +234,31 @@ export default function PesananTable({ items, refetch }: PesananTableProps) {
                       }
                     />
                     {selectedDetailOrder && (
-                      <DialogDetailPesanan pesanan={selectedDetailOrder} />
+                      <DialogDetailPesanan
+                        pesanan={selectedDetailOrder}
+                        onProcessPayment={(order) => {
+                          setSelectedDetailOrder(null);
+                          setSelectedPaymentOrder(order);
+                        }}
+                      />
+                    )}
+                  </Dialog>
+
+                  <Dialog
+                    open={selectedPaymentOrder !== null}
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        setSelectedPaymentOrder(null);
+                      }
+                    }}>
+                    {selectedPaymentOrder && (
+                      <DialogPembayaran
+                        pesanan={selectedPaymentOrder}
+                        onSuccess={() => {
+                          setSelectedPaymentOrder(null);
+                          refetch();
+                        }}
+                      />
                     )}
                   </Dialog>
 

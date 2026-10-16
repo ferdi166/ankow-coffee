@@ -256,7 +256,7 @@ export default function FormPesanan({
             ) : (
               <CheckCircle2Icon />
             )}
-            {isLoading ? "Menyimpan..." : "Simpan Menu"}
+            {isLoading ? "Menyimpan..." : "Simpan Pesanan"}
           </Button>
         </DialogFooter>
       </form>

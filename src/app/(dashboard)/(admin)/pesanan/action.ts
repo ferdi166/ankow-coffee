@@ -1,11 +1,12 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { OrdersFormState } from "@/types/orders";
+import { OrdersFormState, PaymentFormState } from "@/types/orders";
 import { TableFormState } from "@/types/table";
 import {
   OrderItemForm,
   OrdersWithItemsSchemaForm,
+  PaymentSchemaForm,
 } from "@/validations/orders-validation";
 
 export async function createPesanan(
@@ -300,13 +301,90 @@ export async function editPesanan(
   };
 }
 
-export async function hapusMeja(prevState: TableFormState, formData: FormData) {
+export async function pembayaran(
+  prevState: PaymentFormState,
+  formData: FormData,
+) {
+  const orderId = formData.get("id");
+
+  if (typeof orderId !== "string" || !orderId) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: ["ID pesanan tidak ditemukan"],
+      },
+    };
+  }
+
+  const validateFields = PaymentSchemaForm.safeParse({
+    received_amount: formData.get("received_amount"),
+  });
+
+  if (!validateFields.success) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        received_amount:
+          validateFields.error.flatten().fieldErrors.received_amount,
+        _form: [],
+      },
+    };
+  }
+
   const supabase = await createClient();
 
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select("id, total_amount, payment_status")
+    .eq("id", orderId);
+
+  if (orderError || !order) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: [orderError?.message ?? "Pesanan tidak ditemukan"],
+      },
+    };
+  }
+
+  if (order.payment_status === "paid") {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        _form: ["Pesanan ini sudah lunas"],
+      },
+    };
+  }
+
+  const totalAmount = Number(order.total_amount);
+  const receivedAmount = validateFields.data.received_amount;
+
+  if (receivedAmount < totalAmount) {
+    return {
+      status: "error",
+      errors: {
+        ...prevState.errors,
+        received_amount: ["Uang yang diterima kurang dari total tagihan"],
+        _form: [],
+      },
+    };
+  }
+
+  const changeAmount = receivedAmount - totalAmount;
+
   const { error } = await supabase
-    .from("tables")
-    .delete()
-    .eq("id", formData.get("id"));
+    .from("orders")
+    .update({
+      received_amount: receivedAmount,
+      change_amount: changeAmount,
+      payment_status: "paid",
+      payment_method: "cash",
+    })
+    .eq("id", orderId);
 
   if (error) {
     return {

@@ -12,9 +12,13 @@ import { Button } from "@/components/ui/button";
 
 type Props = {
   pesanan: OrdersWithItems;
+  onProcessPayment: (pesanan: OrdersWithItems) => void;
 };
 
-export default function DialogDetailPesanan({ pesanan }: Props) {
+export default function DialogDetailPesanan({
+  pesanan,
+  onProcessPayment,
+}: Props) {
   const items = pesanan.order_items.map((item) => ({
     id: item.id,
     name: item.menu_items.name,
@@ -121,7 +125,10 @@ export default function DialogDetailPesanan({ pesanan }: Props) {
         <DialogFooter className="mx-0 mb-0">
           <DialogClose render={<Button variant="outline">Batal</Button>} />
 
-          <Button type="button" className="shrink-0">
+          <Button
+            type="button"
+            className="shrink-0"
+            onClick={() => onProcessPayment(pesanan)}>
             Proses Pembayaran
           </Button>
         </DialogFooter>

@@ -15,6 +15,12 @@ export const config = {
      * - images/ (public images)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/dashboard/:path*",
+    "/menu/:path*",
+    "/meja/:path*",
+    "/pesanan/:path*",
+    "/galeri-spot/:path*",
+    "/profile-cafe/:path*",
+    "/login",
   ],
 };

@@ -86,8 +86,8 @@ export async function login(prevState: AuthFormState, formData: FormData) {
 
   if (role === USER_ROLES.ADMIN) {
     redirect("/dashboard");
-  } else if (role === USER_ROLES.BARISTA_KITCHEN) {
-    redirect("/kitchen");
+  } else if (role === USER_ROLES.KITCHEN) {
+    redirect("/pesanan-dapur");
   } else {
     redirect("/");
   }

@@ -30,27 +30,23 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4 border-b border-latte/20 group-data-[collapsible=icon]:ml-1">
+      <SidebarHeader className="border-b border-latte/20 p-4 group-data-[collapsible=icon]:p-2">
         <div className="flex items-center gap-3">
-          <div className="flex flex-col min-w-0 group-data-[collapsible=icon]:hidden">
-            <div className="flex items-center gap-3">
-              <div className="flex size-11 items-center justify-center rounded-xl border border-latte/20 bg-espresso text-latte shadow-md">
-                <Coffee className="size-6" />
-              </div>
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-latte/20 bg-espresso text-latte shadow-md group-data-[collapsible=icon]:size-8">
+            <Coffee className="size-6 group-data-[collapsible=icon]:size-4" />
+          </div>
 
-              <div className="flex flex-col">
-                <span className="text-lg font-semibold tracking-tight text-white">
-                  Ankow Coffee
-                </span>
-                <span className="text-xs font-medium text-latte/70">
-                  {profile.role === USER_ROLES.ADMIN
-                    ? "Admin CMS Studio"
-                    : profile.role === USER_ROLES.BARISTA_KITCHEN
-                      ? "Kitchen Display"
-                      : ""}
-                </span>
-              </div>
-            </div>
+          <div className="flex min-w-0 flex-col group-data-[collapsible=icon]:hidden">
+            <span className="text-lg font-semibold tracking-tight text-white">
+              Ankow Coffee
+            </span>
+            <span className="text-xs font-medium text-latte/70">
+              {profile.role === USER_ROLES.ADMIN
+                ? "Admin CMS Studio"
+                : profile.role === USER_ROLES.KITCHEN
+                  ? "Kitchen Display"
+                  : ""}
+            </span>
           </div>
         </div>
       </SidebarHeader>
@@ -98,11 +94,11 @@ export default function AppSidebar() {
             <SidebarMenuButton
               onClick={signOut}
               size="lg"
-              className="w-full flex items-center gap-3 p-2 h-12">
-              <Avatar className="h-10 w-10 rounded-lg">
-                {/* <AvatarImage /> */}
+              className="flex h-12 w-full items-center gap-3 p-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0">
+              <Avatar className="h-10 w-10 shrink-0 rounded-lg group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8">
                 <AvatarFallback>{profile.full_name?.charAt(0)}</AvatarFallback>
               </Avatar>
+
               <div className="flex-1 min-w-0 leading-tight group-data-[collapsible=icon]:hidden">
                 <h4 className="truncate font-semibold text-sm text-text-primary">
                   {profile.full_name}
@@ -111,7 +107,8 @@ export default function AppSidebar() {
                   {profile.role}
                 </p>
               </div>
-              <LogOut className="size-5 text-text-secondary group-hover:text-destructive transition-colors" />
+
+              <LogOut className="size-5 text-text-secondary transition-colors group-hover:text-destructive group-data-[collapsible=icon]:hidden" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

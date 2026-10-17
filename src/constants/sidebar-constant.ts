@@ -46,7 +46,13 @@ export const SIDEBAR_MENU_LIST = {
       icon: Users,
     },
   ],
-  barista: [],
+  kitchen: [
+    {
+      title: "Pesanan Dapur",
+      url: "/pesanan-dapur",
+      icon: ClipboardList,
+    },
+  ],
 };
 
 export type SidebarMenuKey = keyof typeof SIDEBAR_MENU_LIST;

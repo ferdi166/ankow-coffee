@@ -21,6 +21,7 @@ export const config = {
     "/pesanan/:path*",
     "/galeri-spot/:path*",
     "/profile-cafe/:path*",
+    "/pesanan-dapur/:path*",
     "/login",
   ],
 };

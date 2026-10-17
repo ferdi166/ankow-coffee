@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { ProfileUser } from "@/types/auth";
-import { Fragment, ReactNode, createElement, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 
 export default function AuthStoreProvider({
   children,
@@ -19,5 +19,5 @@ export default function AuthStoreProvider({
       useAuthStore.getState().setProfile(profile);
     });
   }, [profile]);
-  return createElement(Fragment, null, children);
+  return <>{children}</>;
 }

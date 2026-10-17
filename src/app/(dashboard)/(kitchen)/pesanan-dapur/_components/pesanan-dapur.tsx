@@ -76,6 +76,7 @@ export default function PesananDapur() {
           )
         `,
         )
+        .order("created_at", { ascending: true })
         .overrideTypes<OrdersWithItems[], { merge: false }>();
 
       if (error) throw error;
@@ -84,18 +85,14 @@ export default function PesananDapur() {
     },
   });
 
-  if (isLoading) {
-    return <div className="p-6">Memuat pesanan dapur...</div>;
-  }
-
   return (
-    <div className="p-4 flex flex-col gap-6 max-w-[1440px] mx-auto w-full overflow-x-scroll">
+    <div className="p-4 flex flex-col gap-6 max-w-[1440px] mx-auto w-full">
       <PageTitle
         title="Kitchen Display System"
         description="Pantau dan proses pesanan dapur."
       />
 
-      <div className="grid min-w-[1100px] grid-cols-4 gap-4 overflow-x-auto">
+      <div className="grid grid-cols-4 gap-4 overflow-x-auto">
         {columns.map((column) => {
           const columnOrders = orders.filter(
             (order) => order.order_status === column.status,

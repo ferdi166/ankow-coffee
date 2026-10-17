@@ -1,4 +1,5 @@
 import { environment } from "@/configs/environment";
+import { USER_ROLES } from "@/constants/user-roles";
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,13 +17,13 @@ export async function updateSession(request: NextRequest) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
+          request.cookies.set(name, value),
         );
         supabaseResponse = NextResponse.next({
           request,
         });
         cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
+          supabaseResponse.cookies.set(name, value, options),
         );
       },
     },
@@ -37,11 +38,12 @@ export async function updateSession(request: NextRequest) {
   // List of CMS and KDS routes that require authentication
   const protectedRoutes = [
     "/dashboard",
-    "/profile",
-    "/gallery",
+    "/pesanan-dapur",
+    "/profile-cafe",
+    "/galeri-spot",
     "/menu",
     "/tables",
-    "/orders",
+    "/pesanan",
     "/kds",
     "/users",
     "/settings",
@@ -49,8 +51,8 @@ export async function updateSession(request: NextRequest) {
     "/admin",
   ];
 
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname === route || pathname.startsWith(`${route}/`)
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   // If user is not authenticated and attempts to access protected route
@@ -61,10 +63,24 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // If user is already authenticated and visits login page, redirect to dashboard
   if (user && pathname === "/login") {
+    const { data: profile } = await supabase
+      .from("profile_users")
+      .select("role")
+      .eq("id", user.id)
+      .eq("is_active", true)
+      .single();
+
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+
+    if (profile?.role === USER_ROLES.KITCHEN) {
+      url.pathname = "/pesanan-dapur";
+    } else if (profile?.role === USER_ROLES.ADMIN) {
+      url.pathname = "/dashboard";
+    } else {
+      url.pathname = "/";
+    }
+
     return NextResponse.redirect(url);
   }
 

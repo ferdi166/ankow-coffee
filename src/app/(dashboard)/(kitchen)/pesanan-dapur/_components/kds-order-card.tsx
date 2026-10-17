@@ -16,8 +16,10 @@ export function KdsOrderCard({ order }: Props) {
       : `Meja ${order.tables?.table_number ?? "-"}`;
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="space-y-2">
+    <Card className="gap-0 overflow-hidden p-0">
+      <div className="h-1 bg-blue-600" />
+
+      <CardHeader className="px-6 py-4">
         <div className="flex items-start justify-between gap-2">
           <div>
             <h3 className="text-lg font-bold">{location}</h3>
@@ -36,11 +38,11 @@ export function KdsOrderCard({ order }: Props) {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 px-6 py-4">
         <div className="space-y-2 border-t pt-3">
           {order.order_items.map((item) => (
             <label key={item.id} className="flex items-start gap-2">
-              <Checkbox className="mt-0.5" />
+              {/* <Checkbox className="mt-0.5" /> */}
               <span className="text-sm font-medium">
                 {item.quantity}x {item.menu_items.name}
                 {item.notes && (

@@ -24,3 +24,8 @@ export type PaymentFormState = {
     _form?: string[];
   };
 };
+
+export type UpdateOrderStatusInput = Pick<
+  OrdersWithItems,
+  "id" | "order_status"
+>;

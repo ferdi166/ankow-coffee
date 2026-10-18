@@ -36,6 +36,29 @@ const columns = [
   },
 ] as const;
 
+const columnStyles = {
+  blue: {
+    header: "border-blue-200 bg-blue-50",
+    title: "text-blue-900",
+    count: "bg-blue-600 text-white",
+  },
+  amber: {
+    header: "border-amber-200 bg-amber-50",
+    title: "text-amber-900",
+    count: "bg-amber-600 text-white",
+  },
+  emerald: {
+    header: "border-emerald-200 bg-emerald-50",
+    title: "text-emerald-900",
+    count: "bg-emerald-600 text-white",
+  },
+  slate: {
+    header: "border-slate-200 bg-slate-100",
+    title: "text-slate-900",
+    count: "bg-slate-600 text-white",
+  },
+} as const;
+
 export default function PesananDapur() {
   const supabase = createClient();
 
@@ -98,18 +121,29 @@ export default function PesananDapur() {
             (order) => order.order_status === column.status,
           );
 
+          const styles = columnStyles[column.color];
+
           return (
             <section key={column.status} className="min-w-0">
-              <div className="mb-3 flex items-center justify-between rounded-lg border bg-muted/40 p-3">
-                <h2 className="font-semibold">{column.title}</h2>
-                <span className="rounded-md bg-background px-2 py-1 text-xs font-bold">
+              <div
+                className={`mb-3 flex items-center justify-between rounded-lg border p-3 ${styles.header}`}>
+                <h2 className={`font-semibold ${styles.title}`}>
+                  {column.title}
+                </h2>
+
+                <span
+                  className={`rounded-md px-2 py-1 text-xs font-bold ${styles.count}`}>
                   {columnOrders.length}
                 </span>
               </div>
 
               <div className="space-y-3">
                 {columnOrders.map((order) => (
-                  <KdsOrderCard key={order.id} order={order} />
+                  <KdsOrderCard
+                    key={order.id}
+                    order={order}
+                    color={column.color}
+                  />
                 ))}
               </div>
             </section>

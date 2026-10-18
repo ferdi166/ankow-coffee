@@ -62,7 +62,11 @@ const columnStyles = {
 export default function PesananDapur() {
   const supabase = createClient();
 
-  const { data: orders = [], isLoading } = useQuery({
+  const {
+    data: orders = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["kitchen-orders"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -143,6 +147,7 @@ export default function PesananDapur() {
                     key={order.id}
                     order={order}
                     color={column.color}
+                    onStatusUpdated={refetch}
                   />
                 ))}
               </div>

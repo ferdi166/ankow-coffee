@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Check, Clock } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { OrdersWithItems } from "@/validations/orders-validation";
+import { useTransition } from "react";
+import { updateKitchenOrderStatus } from "../action";
 
 const topBorderColors = {
   blue: "bg-blue-600",
@@ -15,9 +16,32 @@ const topBorderColors = {
 type Props = {
   order: OrdersWithItems;
   color: keyof typeof topBorderColors;
+  onStatusUpdated: () => void;
 };
 
-export function KdsOrderCard({ order, color }: Props) {
+export function KdsOrderCard({ order, color, onStatusUpdated }: Props) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleStatusUpdate = () => {
+    startTransition(async () => {
+      const result = await updateKitchenOrderStatus(
+        order.id,
+        order.order_status as
+          | "received"
+          | "in_progress"
+          | "ready"
+          | "completed",
+      );
+
+      if (!result.success) {
+        console.error(result.message);
+        return;
+      }
+
+      onStatusUpdated();
+    });
+  };
+
   const location =
     order.order_type === "Takeaway"
       ? "Takeaway"
@@ -63,17 +87,26 @@ export function KdsOrderCard({ order, color }: Props) {
         </div>
 
         {order.notes && (
-          <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
+          <p className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-900">
             Catatan: {order.notes}
-          </div>
+          </p>
         )}
 
-        <Button className="w-full">
+        <Button
+          className="w-full"
+          disabled={isPending || order.order_status === "completed"}
+          onClick={handleStatusUpdate}>
           <ArrowRight />
-          {order.order_status === "received" && "Mulai Memasak"}
-          {order.order_status === "in_progress" && "Siap Diantar"}
-          {order.order_status === "ready" && "Konfirmasi Selesai"}
-          {order.order_status === "completed" && "Selesai"}
+
+          {isPending
+            ? "Memperbarui..."
+            : order.order_status === "received"
+              ? "Mulai Memasak"
+              : order.order_status === "in_progress"
+                ? "Siap Diantar"
+                : order.order_status === "ready"
+                  ? "Konfirmasi Selesai"
+                  : "Selesai"}
         </Button>
       </CardContent>
     </Card>

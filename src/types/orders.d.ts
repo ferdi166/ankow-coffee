@@ -2,6 +2,9 @@ import { OrdersWithItems } from "@/validations/orders-validation";
 
 export type OrdersFormState = {
   status?: string;
+  data?: {
+    order_id: string;
+  };
   errors?: {
     customer_name?: string[];
     table_id?: string[];

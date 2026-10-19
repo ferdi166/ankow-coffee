@@ -6,12 +6,22 @@ export const OrderItemFormSchema = z.object({
   notes: z.string().optional(),
 });
 
-export const OrdersWithItemsSchemaForm = z.object({
-  customer_name: z.string().min(1, "Nama pelanggan wajib diisi"),
-  table_id: z.string().uuid().nullable(),
-  order_type: z.enum(["Dine In", "Takeaway"]),
-  items: z.array(OrderItemFormSchema).min(1, "Minimal pilih satu menu"),
-});
+export const OrdersWithItemsSchemaForm = z
+  .object({
+    customer_name: z.string().optional(),
+    table_id: z.string().uuid().nullable(),
+    order_type: z.enum(["Dine In", "Takeaway"]),
+    items: z.array(OrderItemFormSchema).min(1, "Minimal pilih satu menu"),
+  })
+  .superRefine((data, context) => {
+    if (data.order_type === "Takeaway" && !data.customer_name?.trim()) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["customer_name"],
+        message: "Nama pelanggan wajib diisi untuk Takeaway",
+      });
+    }
+  });
 
 export type OrderItemForm = z.infer<typeof OrderItemFormSchema>;
 export type OrdersWithItemsForm = z.infer<typeof OrdersWithItemsSchemaForm>;

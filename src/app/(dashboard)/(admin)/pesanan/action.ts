@@ -27,7 +27,7 @@ export async function createPesanan(
   }
 
   const validateFields = OrdersWithItemsSchemaForm.safeParse({
-    customer_name: formData.get("customer_name"),
+    customer_name: formData.get("customer_name") || undefined,
     table_id: formData.get("table_id") || null,
     order_type: formData.get("order_type"),
     items,
@@ -47,7 +47,9 @@ export async function createPesanan(
   const orderData = validateFields.data;
 
   // Harga diambil dari database, bukan dipercaya dari client.
-  const menuIds = orderData.items.map((item) => item.menu_item_id);
+  const menuIds = [
+    ...new Set(orderData.items.map((item) => item.menu_item_id)),
+  ];
 
   const { data: menus, error: menuError } = await supabase
     .from("menu_items")

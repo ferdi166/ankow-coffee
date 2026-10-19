@@ -1,14 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 
 import {
   OrdersWithItemsForm,
@@ -16,8 +16,10 @@ import {
 } from "@/validations/orders-validation";
 import { Menu } from "@/validations/menu-validation";
 import MenuCustomer from "./menu-customer";
-import CartItem from "./cart-item";
 import CartSheet from "./cart-sheet";
+import { INITIAL_STATE_ORDERS } from "@/constants/orders-constant";
+import { createPesanan } from "@/actions/order-action";
+import { toast } from "@/components/ui/toast";
 
 type Props = {
   tableId: string;
@@ -158,9 +160,52 @@ export default function CustomerOrderPage({
     }
   }
 
+  const [orderStatus, setOrderStatus] = useState<string>("unpaid");
+  const [createPesananState, createPesananAction, isPendingCreatePesanan] =
+    useActionState(createPesanan, INITIAL_STATE_ORDERS);
+
   function submitOrder(data: OrdersWithItemsForm) {
-    onSubmitOrder?.(data);
+    const formData = new FormData();
+
+    formData.append("customer_name", `Meja ${tableNumber}`);
+    formData.append("table_id", tableId);
+    formData.append("order_type", "Dine In");
+    formData.append("items", JSON.stringify(data.items));
+
+    startTransition(() => {
+      createPesananAction(formData);
+    });
   }
+
+  useEffect(() => {
+    if (createPesananState.status === "error") {
+      toast.add({
+        type: "error",
+        title: "Buat Pesanan gagal",
+        description: createPesananState.errors?._form?.[0],
+        priority: "high",
+      });
+    }
+
+    if (createPesananState.status === "success") {
+      toast.add({
+        type: "success",
+        title: "Buat Pesanan berhasil",
+        description: "Data Pesanan berhasil dikirim",
+      });
+    }
+  }, [createPesananState.errors, createPesananState.status, form]);
+
+  useEffect(() => {
+    if (orderStatus === "paid") {
+      form.reset({
+        customer_name: "",
+        table_id: tableId,
+        order_type: "Dine In",
+        items: [],
+      });
+    }
+  }, [form, orderStatus, tableId]);
 
   return (
     <form
@@ -177,11 +222,11 @@ export default function CustomerOrderPage({
 
       <CartSheet
         items={cartItems}
-        customerName={form.watch("customer_name")}
         onIncrease={increaseQuantityById}
         onDecrease={decreaseQuantityById}
         onRemove={removeItemById}
         onSubmit={form.handleSubmit(submitOrder)}
+        isSubmitting={isPendingCreatePesanan}
       />
     </form>
   );

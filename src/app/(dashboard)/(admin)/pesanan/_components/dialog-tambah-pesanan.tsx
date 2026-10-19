@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect } from "react";
-import { createPesanan } from "../action";
+import { createPesanan } from "@/actions/order-action";
 import { toast } from "@/components/ui/toast";
 import FormPesanan from "./form-pesanan";
 import {
@@ -31,7 +31,7 @@ export default function DialogTambahPesanan({
   const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
 
-    formData.append("customer_name", data.customer_name);
+    formData.append("customer_name", data.customer_name ?? "");
     formData.append("order_type", data.order_type);
     formData.append("table_id", data.table_id ?? "");
     formData.append("items", JSON.stringify(data.items));

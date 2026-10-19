@@ -25,7 +25,6 @@ type CartItemData = {
 
 type Props = {
   items: CartItemData[];
-  customerName: string;
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
   onRemove: (id: string) => void;
@@ -35,7 +34,6 @@ type Props = {
 
 export default function CartSheet({
   items,
-  customerName,
   onIncrease,
   onDecrease,
   onRemove,
@@ -116,11 +114,7 @@ export default function CartSheet({
           <Button
             type="button"
             className="w-full"
-            disabled={
-              items.length === 0 ||
-              customerName.trim().length === 0 ||
-              isSubmitting
-            }
+            disabled={items.length === 0 || isSubmitting}
             onClick={onSubmit}>
             {isSubmitting ? "Mengirim Pesanan..." : "Kirim Pesanan"}
           </Button>

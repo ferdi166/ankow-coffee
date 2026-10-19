@@ -173,70 +173,11 @@ export default function CustomerOrderPage({
       </div>
 
       {/* Daftar menu */}
-      <section className="space-y-3">
-        <MenuCustomer menu={menu} onAdd={addMenuItem} />
-      </section>
+      <MenuCustomer menu={menu} onAdd={addMenuItem} />
 
-      {/* Data pelanggan */}
-      <Card>
-        <CardHeader className="px-4 pt-4 pb-0">
-          <h2 className="font-semibold">Data Pemesan</h2>
-        </CardHeader>
-
-        <CardContent className="space-y-2 p-4">
-          <label htmlFor="customer_name" className="text-sm font-medium">
-            Nama pelanggan
-          </label>
-
-          <Input
-            id="customer_name"
-            placeholder="Masukkan nama Anda"
-            {...form.register("customer_name")}
-          />
-
-          {form.formState.errors.customer_name && (
-            <p className="text-xs text-destructive">
-              {form.formState.errors.customer_name.message}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Ringkasan dan submit */}
-      <Card className="border-primary/20">
-        <CardContent className="space-y-4 p-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Subtotal</span>
-            <span className="font-semibold">
-              Rp {total.toLocaleString("id-ID")}
-            </span>
-          </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <span className="font-semibold">Total</span>
-            <span className="text-lg font-bold text-primary">
-              Rp {total.toLocaleString("id-ID")}
-            </span>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={fields.length === 0}>
-            Kirim Pesanan
-          </Button>
-        </CardContent>
-      </Card>
       <CartSheet
         items={cartItems}
         customerName={form.watch("customer_name")}
-        onCustomerNameChange={(value) =>
-          form.setValue("customer_name", value, {
-            shouldValidate: true,
-          })
-        }
         onIncrease={increaseQuantityById}
         onDecrease={decreaseQuantityById}
         onRemove={removeItemById}

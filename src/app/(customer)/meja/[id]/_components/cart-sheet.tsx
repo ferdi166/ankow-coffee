@@ -12,8 +12,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 
 import CartItem from "./cart-item";
 import OrderSummary from "@/components/common/order-summary";
@@ -28,7 +26,6 @@ type CartItemData = {
 type Props = {
   items: CartItemData[];
   customerName: string;
-  onCustomerNameChange: (value: string) => void;
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
   onRemove: (id: string) => void;
@@ -39,7 +36,6 @@ type Props = {
 export default function CartSheet({
   items,
   customerName,
-  onCustomerNameChange,
   onIncrease,
   onDecrease,
   onRemove,
@@ -101,19 +97,6 @@ export default function CartSheet({
                     onRemove={() => onRemove(item.id)}
                   />
                 ))}
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="customer-name" className="text-sm font-medium">
-                  Nama pelanggan
-                </label>
-
-                <Input
-                  id="customer-name"
-                  value={customerName}
-                  onChange={(event) => onCustomerNameChange(event.target.value)}
-                  placeholder="Masukkan nama Anda"
-                />
               </div>
 
               <OrderSummary

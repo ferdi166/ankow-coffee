@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { Heart, Plus } from "lucide-react";
-
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Menu } from "@/validations/menu-validation";
@@ -42,15 +41,6 @@ export default function MenuCardCustomer({ item, onAdd }: Props) {
           <div>
             <div className="flex items-start justify-between gap-2">
               <h3 className="truncate text-sm font-semibold">{item.name}</h3>
-
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-xs"
-                aria-label={`Favoritkan ${item.name}`}
-                disabled={!item.is_available}>
-                <Heart className="size-4" />
-              </Button>
             </div>
 
             <p className="mt-0.5 line-clamp-2 text-xs leading-snug text-start text-muted-foreground">

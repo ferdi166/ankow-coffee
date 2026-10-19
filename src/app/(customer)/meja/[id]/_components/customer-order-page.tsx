@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import MenuCardCustomer from "./menu-card-customer";
 
 import {
   OrdersWithItemsForm,
@@ -18,6 +17,7 @@ import {
 import { Menu } from "@/validations/menu-validation";
 import MenuCustomer from "./menu-customer";
 import CartItem from "./cart-item";
+import CartSheet from "./cart-sheet";
 
 type Props = {
   tableId: string;
@@ -65,6 +65,21 @@ export default function CustomerOrderPage({
       return totalPrice + item.menuItem.price * item.quantity;
     }, 0);
   }, [selectedItems]);
+
+  const cartItems = selectedItems.flatMap((item) => {
+    if (!item.menuItem) {
+      return [];
+    }
+
+    return [
+      {
+        id: item.menu_item_id,
+        name: item.menuItem.name,
+        price: item.menuItem.price,
+        quantity: item.quantity,
+      },
+    ];
+  });
 
   function addMenuItem(menuItem: Menu) {
     const existingIndex = fields.findIndex(
@@ -115,6 +130,34 @@ export default function CustomerOrderPage({
     });
   }
 
+  function getItemIndex(id: string) {
+    return fields.findIndex((field) => field.menu_item_id === id);
+  }
+
+  function increaseQuantityById(id: string) {
+    const index = getItemIndex(id);
+
+    if (index !== -1) {
+      increaseQuantity(index);
+    }
+  }
+
+  function decreaseQuantityById(id: string) {
+    const index = getItemIndex(id);
+
+    if (index !== -1) {
+      decreaseQuantity(index);
+    }
+  }
+
+  function removeItemById(id: string) {
+    const index = getItemIndex(id);
+
+    if (index !== -1) {
+      remove(index);
+    }
+  }
+
   function submitOrder(data: OrdersWithItemsForm) {
     onSubmitOrder?.(data);
   }
@@ -131,58 +174,7 @@ export default function CustomerOrderPage({
 
       {/* Daftar menu */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Daftar Menu</h2>
-
-          <span className="text-xs text-muted-foreground">
-            {menu.length} menu
-          </span>
-        </div>
-
         <MenuCustomer menu={menu} onAdd={addMenuItem} />
-      </section>
-
-      {/* Keranjang */}
-      <section className="space-y-3">
-        <div className="flex items-center gap-2">
-          <ShoppingBag className="size-5 text-primary" />
-          <h2 className="text-lg font-semibold">Keranjang</h2>
-
-          <span className="text-sm text-muted-foreground">
-            ({fields.length})
-          </span>
-        </div>
-
-        {selectedItems.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 text-center text-sm text-muted-foreground">
-              Belum ada menu yang dipilih.
-            </CardContent>
-          </Card>
-        ) : (
-          <Card>
-            <CardContent className="space-y-4 p-4">
-              {selectedItems.map((item, index) => {
-                if (!item.menuItem) {
-                  return null;
-                }
-
-                return (
-                  <CartItem
-                    key={item.id}
-                    name={item.menuItem.name}
-                    price={item.menuItem.price}
-                    quantity={item.quantity}
-                    isLast={index === selectedItems.length - 1}
-                    onIncrease={() => increaseQuantity(index)}
-                    onDecrease={() => decreaseQuantity(index)}
-                    onRemove={() => remove(index)}
-                  />
-                );
-              })}
-            </CardContent>
-          </Card>
-        )}
       </section>
 
       {/* Data pelanggan */}
@@ -237,6 +229,20 @@ export default function CustomerOrderPage({
           </Button>
         </CardContent>
       </Card>
+      <CartSheet
+        items={cartItems}
+        customerName={form.watch("customer_name")}
+        total={total}
+        onCustomerNameChange={(value) =>
+          form.setValue("customer_name", value, {
+            shouldValidate: true,
+          })
+        }
+        onIncrease={increaseQuantityById}
+        onDecrease={decreaseQuantityById}
+        onRemove={removeItemById}
+        onSubmit={form.handleSubmit(submitOrder)}
+      />
     </form>
   );
 }

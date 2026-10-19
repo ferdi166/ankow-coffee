@@ -4,6 +4,10 @@ export const metadata = {
   title: "Pesanan Meja | Ankow Coffee",
 };
 
-export default function PesananMejaPage() {
-  return <PesananMeja />;
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default function PesananMejaPage({ params }: Props) {
+  return <PesananMeja params={params} />;
 }

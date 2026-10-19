@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { OrdersWithItems } from "@/validations/orders-validation";
-import OrderSummary from "./order-summary";
+import OrderSummary from "../../../../../components/common/order-summary";
 import { Button } from "@/components/ui/button";
 
 type Props = {

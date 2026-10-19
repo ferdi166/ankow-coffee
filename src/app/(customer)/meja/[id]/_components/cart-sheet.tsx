@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 import CartItem from "./cart-item";
+import OrderSummary from "@/components/common/order-summary";
 
 type CartItemData = {
   id: string;
@@ -27,7 +28,6 @@ type CartItemData = {
 type Props = {
   items: CartItemData[];
   customerName: string;
-  total: number;
   onCustomerNameChange: (value: string) => void;
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
@@ -39,7 +39,6 @@ type Props = {
 export default function CartSheet({
   items,
   customerName,
-  total,
   onCustomerNameChange,
   onIncrease,
   onDecrease,
@@ -117,21 +116,15 @@ export default function CartSheet({
                 />
               </div>
 
-              <div className="space-y-3 rounded-xl border bg-card p-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Jumlah menu</span>
-                  <span>{totalItems} menu</span>
-                </div>
-
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">Total</span>
-                  <span className="text-lg font-bold text-primary">
-                    Rp {total.toLocaleString("id-ID")}
-                  </span>
-                </div>
-              </div>
+              <OrderSummary
+                items={items.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  price: item.price,
+                  quantity: item.quantity,
+                  notes: "",
+                }))}
+              />
             </>
           )}
         </div>

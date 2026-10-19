@@ -23,7 +23,7 @@ import MenuCard from "./menu-card";
 import OrderTypeSelector from "./order-type-selector";
 import CustomerField from "./customer-field";
 import SelectedItems from "./selected-items";
-import OrderSummary from "./order-summary";
+import OrderSummary from "../../../../../components/common/order-summary";
 import TableField from "./table-field";
 import { Table } from "@/validations/table-validation";
 import { useMemo, useState } from "react";

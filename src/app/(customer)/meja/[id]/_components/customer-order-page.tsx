@@ -232,7 +232,6 @@ export default function CustomerOrderPage({
       <CartSheet
         items={cartItems}
         customerName={form.watch("customer_name")}
-        total={total}
         onCustomerNameChange={(value) =>
           form.setValue("customer_name", value, {
             shouldValidate: true,

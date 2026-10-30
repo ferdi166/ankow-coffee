@@ -1,3 +1,15 @@
+"use client";
+
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
 import {
   Card,
   CardContent,
@@ -26,10 +38,13 @@ function formatCurrency(value: number) {
 export default function MonthlySalesChart({
   monthlySales,
 }: MonthlySalesChartProps) {
-  const maximumSale = Math.max(...monthlySales.map((sale) => sale.amount), 1);
-
   const highestMonth = monthlySales.reduce((highest, current) =>
     current.amount > highest.amount ? current : highest,
+  );
+
+  const totalRevenue = monthlySales.reduce(
+    (total, sale) => total + sale.amount,
+    0,
   );
 
   return (
@@ -51,31 +66,55 @@ export default function MonthlySalesChart({
             : "Belum ada transaksi"}
         </div>
 
-        <div className="flex h-64 items-end gap-4 border-b pb-2">
-          {monthlySales.map((sale) => {
-            const barHeight =
-              sale.amount > 0
-                ? Math.max((sale.amount / maximumSale) * 100, 8)
-                : 2;
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={monthlySales}
+              margin={{
+                top: 8,
+                right: 8,
+                left: 8,
+                bottom: 8,
+              }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
 
-            return (
-              <div
-                key={sale.month}
-                className="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                <div className="group relative flex h-full w-full items-end">
-                  <div
-                    className="w-full rounded-t-md bg-primary transition-colors group-hover:bg-primary/80"
-                    style={{ height: `${barHeight}%` }}
-                    title={`${sale.month}: ${formatCurrency(sale.amount)}`}
-                  />
-                </div>
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11 }}
+              />
 
-                <span className="text-xs text-muted-foreground">
-                  {sale.month}
-                </span>
-              </div>
-            );
-          })}
+              <YAxis
+                width={38}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => `${Number(value) / 1000}k`}
+              />
+
+              <Tooltip
+                cursor={{ fill: "var(--color-muted)" }}
+                formatter={(value) => formatCurrency(Number(value))}
+                labelFormatter={(label) => `Bulan ${label}`}
+              />
+
+              <Bar
+                dataKey="amount"
+                name="Omzet"
+                fill="var(--color-primary)"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>Total omzet enam bulan</span>
+
+          <span className="font-semibold text-foreground">
+            {formatCurrency(totalRevenue)}
+          </span>
         </div>
       </CardContent>
     </Card>

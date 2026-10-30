@@ -40,15 +40,15 @@ export default function MetricCards({
 
   const metrics = [
     {
-      title: "Total Omzet Hari Ini",
-      value: formatCurrency(totalRevenue),
-      description: `${orders.length} transaksi`,
-      icon: Banknote,
-    },
-    {
       title: "Omzet Bulan Ini",
       value: formatCurrency(monthlyRevenue),
       description: "Total penjualan bulan berjalan",
+      icon: Banknote,
+    },
+    {
+      title: "Total Omzet Hari Ini",
+      value: formatCurrency(totalRevenue),
+      description: `${orders.length} transaksi`,
       icon: Banknote,
     },
     {

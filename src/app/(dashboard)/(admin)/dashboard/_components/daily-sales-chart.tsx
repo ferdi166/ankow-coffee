@@ -1,3 +1,15 @@
+"use client";
+
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
 import {
   Card,
   CardContent,
@@ -46,14 +58,18 @@ function getHourlySales(orders: OrdersWithItems[]): HourlySale[] {
 
 export default function DailySalesChart({ orders }: DailySalesChartProps) {
   const hourlySales = getHourlySales(orders);
-  const maximumSale = Math.max(...hourlySales.map((sale) => sale.amount), 1);
 
   const peakHour = hourlySales.reduce((highest, current) =>
     current.amount > highest.amount ? current : highest,
   );
 
+  const totalRevenue = hourlySales.reduce(
+    (total, sale) => total + sale.amount,
+    0,
+  );
+
   return (
-    <Card className="xl:col-span-2">
+    <Card>
       <CardHeader>
         <CardTitle>Grafik Penjualan Harian</CardTitle>
         <CardDescription>Tren omzet berdasarkan jam transaksi</CardDescription>
@@ -67,39 +83,54 @@ export default function DailySalesChart({ orders }: DailySalesChartProps) {
             : "Belum ada transaksi hari ini"}
         </div>
 
-        <div className="flex h-64 items-end gap-2 overflow-x-auto border-b pb-2">
-          {hourlySales.map((sale) => {
-            const barHeight =
-              sale.amount > 0
-                ? Math.max((sale.amount / maximumSale) * 100, 8)
-                : 2;
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={hourlySales}
+              margin={{
+                top: 8,
+                right: 8,
+                left: 8,
+                bottom: 8,
+              }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
 
-            return (
-              <div
-                key={sale.hour}
-                className="flex h-full min-w-8 flex-1 flex-col items-center justify-end gap-2">
-                <div className="group relative flex h-full w-full items-end">
-                  <div
-                    className="w-full rounded-t-md bg-primary transition-colors group-hover:bg-primary/80"
-                    style={{ height: `${barHeight}%` }}
-                    title={`${sale.hour}: ${formatCurrency(sale.amount)}`}
-                  />
-                </div>
+              <XAxis
+                dataKey="hour"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11 }}
+              />
 
-                <span className="text-[10px] text-muted-foreground">
-                  {sale.hour}
-                </span>
-              </div>
-            );
-          })}
+              <YAxis
+                width={38}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11 }}
+                tickFormatter={(value) => `${Number(value) / 1000}k`}
+              />
+
+              <Tooltip
+                cursor={{ fill: "var(--color-muted)" }}
+                formatter={(value) => formatCurrency(Number(value))}
+                labelFormatter={(label) => `Jam ${label}`}
+              />
+
+              <Bar
+                dataKey="amount"
+                name="Omzet"
+                fill="var(--color-primary)"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Total omzet</span>
+          <span>Total omzet hari ini</span>
+
           <span className="font-semibold text-foreground">
-            {formatCurrency(
-              hourlySales.reduce((total, sale) => total + sale.amount, 0),
-            )}
+            {formatCurrency(totalRevenue)}
           </span>
         </div>
       </CardContent>

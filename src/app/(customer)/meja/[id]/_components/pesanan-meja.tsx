@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import CustomerOrderPage from "./customer-order-page";
+import { Menu } from "@/validations/menu-validation";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -25,7 +26,8 @@ export default async function PesananMeja({ params }: Props) {
     .from("menu_items")
     .select(
       "id, categories!menu_items_category_id_fkey(id, name), name, description, price, image_url, is_available",
-    );
+    )
+    .overrideTypes<Menu[], { merge: false }>();
 
   if (menuError) {
     throw menuError;

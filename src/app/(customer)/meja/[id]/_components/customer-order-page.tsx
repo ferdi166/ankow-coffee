@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  startTransition,
-  useActionState,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { startTransition, useActionState, useEffect, useMemo } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -160,7 +154,6 @@ export default function CustomerOrderPage({
     }
   }
 
-  const [orderStatus, setOrderStatus] = useState<string>("unpaid");
   const [createPesananState, createPesananAction, isPendingCreatePesanan] =
     useActionState(createPesanan, INITIAL_STATE_ORDERS);
 
@@ -193,19 +186,9 @@ export default function CustomerOrderPage({
         title: "Buat Pesanan berhasil",
         description: "Data Pesanan berhasil dikirim",
       });
+      form.reset();
     }
   }, [createPesananState.errors, createPesananState.status, form]);
-
-  useEffect(() => {
-    if (orderStatus === "paid") {
-      form.reset({
-        customer_name: "",
-        table_id: tableId,
-        order_type: "Dine In",
-        items: [],
-      });
-    }
-  }, [form, orderStatus, tableId]);
 
   return (
     <form

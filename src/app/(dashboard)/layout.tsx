@@ -14,8 +14,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className="print:hidden">
         <AppSidebar />
       </div>
-      <SidebarInset className="overflow-x-hidden">
-        <header className="flex justify-between h-16 shrink-0 items-center gap-2 bg-latte-light shadow-xs transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <SidebarInset className="relative min-h-screen overflow-x-clip">
+        <header className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-2 bg-latte-light shadow-xs transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="cursor-pointer" />
             <Separator orientation="vertical" className="mr-2" />

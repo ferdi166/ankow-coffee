@@ -40,11 +40,11 @@ export const SIDEBAR_MENU_LIST = {
       url: "/pesanan",
       icon: ClipboardList,
     },
-    {
-      title: "User & Staff",
-      url: "/users",
-      icon: Users,
-    },
+    // {
+    //   title: "User & Staff",
+    //   url: "/users",
+    //   icon: Users,
+    // },
   ],
   kitchen: [
     {

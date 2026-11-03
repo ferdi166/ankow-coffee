@@ -107,7 +107,8 @@ export async function createPesanan(
       total_amount: totalAmount,
     })
     .select("id")
-    .single();
+    .single()
+    .overrideTypes<{ id: string }, { merge: false }>();
 
   if (orderError || !order) {
     return {
@@ -140,6 +141,7 @@ export async function createPesanan(
     status: "success",
     data: {
       order_id: order.id,
+      action: "create" as const,
     },
   };
 }
@@ -300,6 +302,10 @@ export async function editPesanan(
 
   return {
     status: "success",
+    data: {
+      order_id: orderId,
+      action: "update" as const,
+    },
   };
 }
 

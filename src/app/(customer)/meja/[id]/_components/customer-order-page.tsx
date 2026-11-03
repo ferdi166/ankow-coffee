@@ -1,6 +1,12 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useMemo } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,13 +18,30 @@ import { Menu } from "@/validations/menu-validation";
 import MenuCustomer from "./menu-customer";
 import CartSheet from "./cart-sheet";
 import { INITIAL_STATE_ORDERS } from "@/constants/orders-constant";
-import { createPesanan } from "@/actions/order-action";
+import { createPesanan, editPesanan } from "@/actions/order-action";
+import { OrdersFormState } from "@/types/orders";
 import { toast } from "@/components/ui/toast";
+
+type ActiveOrder = {
+  id: string;
+  customer_name: string | null;
+  order_type: string;
+  total_amount: number;
+  payment_status: string;
+  order_status: string;
+  order_items: {
+    id: string;
+    menu_item_id: string;
+    quantity: number;
+    notes: string | null;
+  }[];
+};
 
 type Props = {
   tableId: string;
   tableNumber: string;
   menu: Menu[];
+  activeOrder: ActiveOrder | null;
   onSubmitOrder?: (data: OrdersWithItemsForm) => void;
 };
 
@@ -26,6 +49,7 @@ export default function CustomerOrderPage({
   tableId,
   tableNumber,
   menu,
+  activeOrder,
   onSubmitOrder,
 }: Props) {
   const form = useForm<OrdersWithItemsForm>({
@@ -38,10 +62,34 @@ export default function CustomerOrderPage({
     },
   });
 
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(
+    activeOrder?.id ?? null,
+  );
+
   const { fields, append, update, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
+
+  const { reset } = form;
+
+  useEffect(() => {
+    if (!activeOrder) {
+      return;
+    }
+
+    reset({
+      customer_name: activeOrder.customer_name ?? `Meja ${tableNumber}`,
+      table_id: tableId,
+      order_type: "Dine In",
+      items: activeOrder.order_items.map((item) => ({
+        menu_item_id: item.menu_item_id,
+        quantity: item.quantity,
+        notes: item.notes ?? "",
+      })),
+    });
+  }, [activeOrder, reset, tableId, tableNumber]);
 
   const selectedItems = fields.map((field) => {
     const menuItem = menu.find((item) => item.id === field.menu_item_id);
@@ -154,8 +202,23 @@ export default function CustomerOrderPage({
     }
   }
 
-  const [createPesananState, createPesananAction, isPendingCreatePesanan] =
-    useActionState(createPesanan, INITIAL_STATE_ORDERS);
+  async function saveCustomerOrder(
+    previousState: OrdersFormState,
+    formData: FormData,
+  ) {
+    const currentOrderId = formData.get("id");
+
+    if (typeof currentOrderId === "string" && currentOrderId.length > 0) {
+      return editPesanan(previousState, formData);
+    }
+
+    return createPesanan(previousState, formData);
+  }
+
+  const [orderState, saveOrderAction, isPending] = useActionState(
+    saveCustomerOrder,
+    INITIAL_STATE_ORDERS,
+  );
 
   function submitOrder(data: OrdersWithItemsForm) {
     const formData = new FormData();
@@ -165,30 +228,48 @@ export default function CustomerOrderPage({
     formData.append("order_type", "Dine In");
     formData.append("items", JSON.stringify(data.items));
 
+    if (orderId) {
+      formData.append("id", orderId);
+    }
+
     startTransition(() => {
-      createPesananAction(formData);
+      saveOrderAction(formData);
     });
   }
 
   useEffect(() => {
-    if (createPesananState.status === "error") {
+    if (orderState.status === "error") {
       toast.add({
         type: "error",
         title: "Buat Pesanan gagal",
-        description: createPesananState.errors?._form?.[0],
+        description: orderState.errors?._form?.[0],
         priority: "high",
       });
     }
 
-    if (createPesananState.status === "success") {
+    if (orderState.status === "success") {
       toast.add({
         type: "success",
-        title: "Buat Pesanan berhasil",
-        description: "Data Pesanan berhasil dikirim",
+        title:
+          orderState.data?.action === "update"
+            ? "Pesanan berhasil diperbarui"
+            : "Pesanan berhasil dibuat",
+        description:
+          orderState.data?.action === "update"
+            ? "Perubahan pesanan berhasil disimpan"
+            : "Pesanan berhasil dikirim",
       });
-      form.reset();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsCartOpen(false);
     }
-  }, [createPesananState.errors, createPesananState.status, form]);
+  }, [orderState.errors, orderState.status, form, orderState.data?.action]);
+
+  useEffect(() => {
+    if (orderState.status === "success" && orderState.data?.order_id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOrderId(orderState.data.order_id);
+    }
+  }, [orderState]);
 
   return (
     <form
@@ -204,12 +285,14 @@ export default function CustomerOrderPage({
       <MenuCustomer menu={menu} onAdd={addMenuItem} />
 
       <CartSheet
+        open={isCartOpen}
+        onOpenChange={setIsCartOpen}
         items={cartItems}
         onIncrease={increaseQuantityById}
         onDecrease={decreaseQuantityById}
         onRemove={removeItemById}
         onSubmit={form.handleSubmit(submitOrder)}
-        isSubmitting={isPendingCreatePesanan}
+        isSubmitting={isPending}
       />
     </form>
   );

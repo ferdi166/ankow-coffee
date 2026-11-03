@@ -24,6 +24,8 @@ type CartItemData = {
 };
 
 type Props = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   items: CartItemData[];
   onIncrease: (id: string) => void;
   onDecrease: (id: string) => void;
@@ -33,6 +35,8 @@ type Props = {
 };
 
 export default function CartSheet({
+  open,
+  onOpenChange,
   items,
   onIncrease,
   onDecrease,
@@ -46,7 +50,7 @@ export default function CartSheet({
   );
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger
         render={
           <Button

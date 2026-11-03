@@ -33,12 +33,41 @@ export default async function PesananMeja({ params }: Props) {
     throw menuError;
   }
 
+  const { data: activeOrder, error: activeOrderError } = await supabase
+    .from("orders")
+    .select(
+      `
+    id,
+    customer_name,
+    order_type,
+    total_amount,
+    payment_status,
+    order_status,
+    order_items (
+      id,
+      menu_item_id,
+      quantity,
+      notes
+    )
+  `,
+    )
+    .eq("table_id", table.id)
+    .eq("payment_status", "unpaid")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (activeOrderError) {
+    throw activeOrderError;
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <CustomerOrderPage
         tableId={table.id}
         tableNumber={table.table_number}
         menu={menu ?? []}
+        activeOrder={activeOrder}
       />
     </main>
   );

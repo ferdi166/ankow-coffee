@@ -81,7 +81,7 @@ export default function MetricCards({
             </CardHeader>
 
             <CardContent>
-              <div className="text-2xl font-bold">{metric.value}</div>
+              <div className="text-2xl font-bold mb-1">{metric.value}</div>
 
               <p className="text-xs text-muted-foreground">
                 {metric.description}

@@ -4,6 +4,7 @@ export type OrdersFormState = {
   status?: string;
   data?: {
     order_id: string;
+    action?: "create" | "update";
   };
   errors?: {
     customer_name?: string[];

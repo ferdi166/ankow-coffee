@@ -84,7 +84,7 @@ export default function MejaCard({ item, refetch }: MejaCardProps) {
             )}
 
             <span className="mt-2.5 text-xs text-muted-foreground">
-              {process.env.NEXT_PUBLIC_SITE_URL}/table/{item.table_number}
+              {item.qr_code_url}
             </span>
           </div>
         </CardContent>

@@ -47,7 +47,7 @@ export default function DialogEditPesanan({
     hasHandledResult.current = false;
     const formData = new FormData();
 
-    formData.append("customer_name", data.customer_name);
+    formData.append("customer_name", data.customer_name ?? "");
     formData.append("order_type", data.order_type);
     formData.append("table_id", data.table_id ?? "");
     formData.append("items", JSON.stringify(data.items));

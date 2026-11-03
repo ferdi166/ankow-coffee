@@ -4,9 +4,11 @@ import { KdsOrderCard } from "./kds-order-card";
 type Props = {
   title: string;
   orders: OrdersWithItems[];
+  color: "blue" | "amber" | "emerald" | "slate";
+  onStatusUpdated: () => void;
 };
 
-export function KdsColumn({ title, orders }: Props) {
+export function KdsColumn({ title, orders, color, onStatusUpdated }: Props) {
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
@@ -16,7 +18,12 @@ export function KdsColumn({ title, orders }: Props) {
 
       <div className="space-y-3">
         {orders.map((order) => (
-          <KdsOrderCard key={order.id} order={order} />
+          <KdsOrderCard
+            key={order.id}
+            color={color}
+            order={order}
+            onStatusUpdated={onStatusUpdated}
+          />
         ))}
       </div>
     </section>

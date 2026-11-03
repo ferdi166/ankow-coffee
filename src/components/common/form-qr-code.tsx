@@ -4,7 +4,7 @@ import QRCode from "react-qr-code";
 import { QrCode } from "lucide-react";
 import { Table } from "@/validations/table-validation";
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_SITE_URL}/table`;
+const BASE_URL = `${process.env.NEXT_PUBLIC_SITE_URL}/meja`;
 
 export default function FormQrCode({
   type,

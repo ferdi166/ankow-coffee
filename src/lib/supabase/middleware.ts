@@ -37,6 +37,7 @@ export async function updateSession(request: NextRequest) {
 
   // List of CMS and KDS routes that require authentication
   const protectedRoutes = [
+    "/",
     "/dashboard",
     "/pesanan-dapur",
     "/profile-cafe",

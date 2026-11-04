@@ -15,6 +15,7 @@ export const config = {
      * - images/ (public images)
      * Feel free to modify this pattern to include more paths.
      */
+    "/",
     "/dashboard/:path*",
     "/menu/:path*",
     "/meja/:path*",
